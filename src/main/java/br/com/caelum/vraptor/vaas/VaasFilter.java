@@ -31,15 +31,6 @@ import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 
 public class VaasFilter implements Filter {
 
-	public class RolesMatcher implements Matcher<Method> {
-
-		@Override
-		public boolean accepts(Method element) {
-			return element.getAnnotation(RolesConfiguration.class) != null;
-		}
-
-	}
-
 	@Inject
 	private Event<AuthenticatedEvent> authenticatedEvent;
 
@@ -64,11 +55,13 @@ public class VaasFilter implements Filter {
 
 	private Object accessConfiguration;
 
+	private RolesConfigMethod rolesConfigMethod;
+
 	@Override
+	@SuppressWarnings("rawtypes")
 	public void init(FilterConfig filterConfig) throws ServletException {
 		this.loginUrl = filterConfig.getInitParameter("loginUrl");
 		this.logoutUrl = filterConfig.getInitParameter("logoutUrl");
-		@SuppressWarnings("rawtypes")
 		Instance possibleConfigurations = CDI.current().select(
 				AccessConfiguration.class);
 		if (possibleConfigurations.isAmbiguous()) {
@@ -76,6 +69,7 @@ public class VaasFilter implements Filter {
 					"You should use just one AccessConfiguration class");
 		}
 		this.accessConfiguration = possibleConfigurations.get();
+		this.rolesConfigMethod = new RolesConfigMethod(this.accessConfiguration);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -102,11 +96,7 @@ public class VaasFilter implements Filter {
 			notLoggedEvent.fire(new NotLoggedEvent());
 			return;
 		} else {
-			Method rolesConfig = new Mirror()
-					.on(accessConfiguration.getClass()).reflectAll().methods()
-					.matching(new RolesMatcher()).get(0);
-			List<String> roles = (List<String>)new Mirror().on(accessConfiguration).invoke().method(rolesConfig).withArgs(httpRequest
-					.getRequestURI());
+			List<String> roles = rolesConfigMethod.rolesFor(httpRequest.getRequestURI());
 			if (!roles.isEmpty()) {
 				ArrayList<String> rolesNotAllowed = new ArrayList<String>();
 				for (String role : roles) {
