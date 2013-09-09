@@ -12,7 +12,6 @@ public class RolesConfigMethod {
 	private Method rolesConfig;
 
 	public RolesConfigMethod(Object accessConfiguration) {
-		super();
 		this.accessConfiguration = accessConfiguration;
 		rolesConfig = new Mirror().on(accessConfiguration.getClass())
 				.reflectAll().methods().matching(new RolesMatcher()).get(0);		

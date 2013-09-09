@@ -95,30 +95,27 @@ public class VaasFilter implements Filter {
 		if (httpRequest.getUserPrincipal() == null) {
 			notLoggedEvent.fire(new NotLoggedEvent());
 			return;
-		} else {
-			List<String> roles = rolesConfigMethod.rolesFor(httpRequest.getRequestURI());
-			if (!roles.isEmpty()) {
-				ArrayList<String> rolesNotAllowed = new ArrayList<String>();
-				for (String role : roles) {
-					if (httpRequest.isUserInRole(role)) {
-						refreshUserEvent.fire(new RefreshUserEvent());
-						chain.doFilter(request, response);
-						return;
-					}
-					rolesNotAllowed.add(role);
-				}
-				authorizationFailedEvent.fire(new AuthorizationFailedEvent(
-						rolesNotAllowed));
-			}
-
 		}
+		List<String> roles = rolesConfigMethod.rolesFor(httpRequest.getRequestURI());
+		if (!roles.isEmpty()) {
+			ArrayList<String> rolesNotAllowed = new ArrayList<String>();
+			for (String role : roles) {
+				if (httpRequest.isUserInRole(role)) {
+					refreshUserEvent.fire(new RefreshUserEvent());
+					chain.doFilter(request, response);
+					return;
+				}
+				rolesNotAllowed.add(role);
+			}
+			authorizationFailedEvent.fire(new AuthorizationFailedEvent(
+					rolesNotAllowed));
+		}
+
 
 	}
 
 	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
 	}
 
 }
