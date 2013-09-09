@@ -1,6 +1,7 @@
 package br.com.caelum.vraptor.vaas;
 
 import java.io.IOException;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
 import net.vidageek.mirror.dsl.Mirror;
@@ -28,7 +30,6 @@ import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.LogoutEvent;
 import br.com.caelum.vraptor.vaas.event.NotLoggedEvent;
 import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
-
 public class VaasFilter implements Filter {
 
 	@Inject
@@ -72,7 +73,6 @@ public class VaasFilter implements Filter {
 		this.rolesConfigMethod = new RolesConfigMethod(this.accessConfiguration);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
@@ -96,19 +96,20 @@ public class VaasFilter implements Filter {
 			notLoggedEvent.fire(new NotLoggedEvent());
 			return;
 		}
-		List<String> roles = rolesConfigMethod.rolesFor(httpRequest.getRequestURI());
+		List<Rule> roles = rolesConfigMethod.rolesFor(httpRequest.getRequestURI());
 		if (!roles.isEmpty()) {
-			ArrayList<String> rolesNotAllowed = new ArrayList<String>();
-			for (String role : roles) {
-				if (httpRequest.isUserInRole(role)) {
+			ArrayList<Rule> rulesNotAllowed = new ArrayList<Rule>();
+			for (Rule rule : roles) {
+				//TODO: make this a 'and', not a 'or'
+				if (rule.isAuthorized()) {
 					refreshUserEvent.fire(new RefreshUserEvent());
 					chain.doFilter(request, response);
 					return;
 				}
-				rolesNotAllowed.add(role);
+				rulesNotAllowed.add(rule);
 			}
 			authorizationFailedEvent.fire(new AuthorizationFailedEvent(
-					rolesNotAllowed));
+					rulesNotAllowed));
 		}
 
 

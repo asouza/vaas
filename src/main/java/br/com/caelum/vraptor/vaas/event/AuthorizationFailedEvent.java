@@ -4,17 +4,19 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 
+import br.com.caelum.vraptor.vaas.Rule;
+
 @RequestScoped
 public class AuthorizationFailedEvent {
 
 
-	private List<String> rolesNotAllowed;
+	private List<Rule> rolesNotAllowed;
 
-	public AuthorizationFailedEvent(List<String> rolesNotAllowed) {
+	public AuthorizationFailedEvent(List<Rule> rolesNotAllowed) {
 		this.rolesNotAllowed = rolesNotAllowed;
 	}
 	
-	public List<String> getRolesNotAllowed() {
+	public List<Rule> getRolesNotAllowed() {
 		return rolesNotAllowed;
 	}
 

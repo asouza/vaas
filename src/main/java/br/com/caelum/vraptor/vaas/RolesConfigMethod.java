@@ -3,6 +3,8 @@ package br.com.caelum.vraptor.vaas;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.enterprise.inject.Vetoed;
+
 import net.vidageek.mirror.dsl.Mirror;
 import net.vidageek.mirror.list.dsl.Matcher;
 
@@ -18,8 +20,8 @@ public class RolesConfigMethod {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<String> rolesFor(String uri) {
-		return (List<String>) new Mirror()
+	public List<Rule> rolesFor(String uri) {
+		return (List<Rule>) new Mirror()
 				.on(accessConfiguration).invoke().method(rolesConfig)
 				.withArgs(uri);
 	}
