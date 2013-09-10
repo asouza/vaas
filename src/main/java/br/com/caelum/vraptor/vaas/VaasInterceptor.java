@@ -1,5 +1,6 @@
 package br.com.caelum.vraptor.vaas;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
@@ -20,21 +21,20 @@ public class VaasInterceptor implements Interceptor {
 	@Inject private Authenticator auth;
 	@Inject	private ServletContext context;
 	@Inject private HttpServletRequest httpRequest;
-
 	
 	private String loginUrl;
 	private String logoutUrl;
 
+	@PostConstruct
 	public void config(){
 		this.loginUrl = context.getInitParameter("loginUrl");
 		this.logoutUrl = context.getInitParameter("logoutUrl");
-		
 	}
 	
 	@Override
 	public void intercept(InterceptorStack stack, ControllerMethod method,
 			Object controllerInstance) throws InterceptionException {
-		String context = httpRequest.getServletContext().getContextPath();
+		String context = this.context.getContextPath();
 		String uri = httpRequest.getRequestURI().substring(context.length());
 		
 		if(uri.equals(loginUrl)){
