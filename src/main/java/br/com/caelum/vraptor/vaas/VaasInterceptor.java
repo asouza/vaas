@@ -1,36 +1,33 @@
 package br.com.caelum.vraptor.vaas;
 
-import java.io.IOException;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.CDI;
 import javax.inject.Inject;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 
-import net.vidageek.mirror.dsl.Mirror;
-import net.vidageek.mirror.list.dsl.Matcher;
-import net.vidageek.mirror.list.dsl.MirrorList;
 import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.LogoutEvent;
 import br.com.caelum.vraptor.vaas.event.NotLoggedEvent;
 import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
-public class VaasFilter implements Filter {
+import br.com.caelum.vraptor4.InterceptionException;
+import br.com.caelum.vraptor4.Intercepts;
+import br.com.caelum.vraptor4.controller.ControllerMethod;
+import br.com.caelum.vraptor4.core.InterceptorStack;
+import br.com.caelum.vraptor4.interceptor.Interceptor;
+
+@Intercepts
+@ApplicationScoped
+public class VaasInterceptor implements Interceptor {
 
 	@Inject
 	private Event<AuthenticatedEvent> authenticatedEvent;
@@ -57,12 +54,18 @@ public class VaasFilter implements Filter {
 	private Object accessConfiguration;
 
 	private RolesConfigMethod rolesConfigMethod;
+	
+	@Inject
+	private ServletContext context;
+	
+	@Inject
+	private HttpServletRequest httpRequest;
 
-	@Override
 	@SuppressWarnings("rawtypes")
-	public void init(FilterConfig filterConfig) throws ServletException {
-		this.loginUrl = filterConfig.getInitParameter("loginUrl");
-		this.logoutUrl = filterConfig.getInitParameter("logoutUrl");
+	@PostConstruct
+	public void config() {
+		this.loginUrl = context.getInitParameter("loginUrl");
+		this.logoutUrl = context.getInitParameter("logoutUrl");
 		Instance possibleConfigurations = CDI.current().select(
 				AccessConfiguration.class);
 		if (possibleConfigurations.isAmbiguous()) {
@@ -73,17 +76,18 @@ public class VaasFilter implements Filter {
 		this.rolesConfigMethod = new RolesConfigMethod(this.accessConfiguration);
 	}
 
+
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest httpRequest = (HttpServletRequest) request;
+	public void intercept(InterceptorStack stack, ControllerMethod method,
+			Object controllerInstance) throws InterceptionException {
 		if (httpRequest.getRequestURI().equals(logoutUrl)) {
 			logoutEvent.fire(new LogoutEvent());
+			return;
 		}
 		if (httpRequest.getRequestURI().equals(loginUrl)) {
 			try {
-				httpRequest.login(request.getParameter("login"),
-						request.getParameter("password"));
+				httpRequest.login(httpRequest.getParameter("login"),
+						httpRequest.getParameter("password"));
 				authenticatedEvent.fire(new AuthenticatedEvent(httpRequest
 						.getUserPrincipal()));
 			} catch (ServletException e) {
@@ -99,24 +103,25 @@ public class VaasFilter implements Filter {
 		List<Rule> roles = rolesConfigMethod.rolesFor(httpRequest.getRequestURI());
 		if (!roles.isEmpty()) {
 			ArrayList<Rule> rulesNotAllowed = new ArrayList<Rule>();
+			boolean authorized = true;
 			for (Rule rule : roles) {
-				//TODO: make this a 'and', not a 'or'
-				if (rule.isAuthorized()) {
-					refreshUserEvent.fire(new RefreshUserEvent());
-					chain.doFilter(request, response);
-					return;
+				authorized = authorized && rule.isAuthorized();
+				if(!authorized){
+					rulesNotAllowed.add(rule);
 				}
-				rulesNotAllowed.add(rule);
+			}
+			if (authorized) {
+				refreshUserEvent.fire(new RefreshUserEvent());
+				stack.next(method, controllerInstance);
 			}
 			authorizationFailedEvent.fire(new AuthorizationFailedEvent(
 					rulesNotAllowed));
-		}
-
-
+		}		
 	}
 
 	@Override
-	public void destroy() {
+	public boolean accepts(ControllerMethod method) {
+		return true;
 	}
 
 }
