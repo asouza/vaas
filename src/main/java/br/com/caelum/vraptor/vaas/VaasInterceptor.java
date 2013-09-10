@@ -8,6 +8,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -61,13 +62,12 @@ public class VaasInterceptor implements Interceptor {
 	@Inject
 	private HttpServletRequest httpRequest;
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "serial" })
 	@PostConstruct
 	public void config() {
 		this.loginUrl = context.getInitParameter("loginUrl");
 		this.logoutUrl = context.getInitParameter("logoutUrl");
-		Instance possibleConfigurations = CDI.current().select(
-				AccessConfiguration.class);
+		Instance possibleConfigurations = CDI.current().select(new AnnotationLiteral<AccessConfiguration>() {});
 		if (possibleConfigurations.isAmbiguous()) {
 			throw new RuntimeException(
 					"You should use just one AccessConfiguration class");

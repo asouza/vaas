@@ -1,0 +1,2 @@
+- checar urls publicas
+	- se a url é publica não deve fazer o processo

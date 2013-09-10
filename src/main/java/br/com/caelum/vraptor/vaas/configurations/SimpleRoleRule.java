@@ -1,5 +1,6 @@
 package br.com.caelum.vraptor.vaas.configurations;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -21,7 +22,9 @@ public class SimpleRoleRule implements Rule {
 	public boolean isAuthorized() {
 		Map<String, List<String>> mappings = config.getRolesByUri();
 		List<String> roles = mappings.get(request.getRequestURI());
-		
+		if(roles==null){
+			roles = Collections.emptyList();
+		}
 		boolean valid = true;
 		for (String role : roles) {
 			valid = valid && request.isUserInRole(role);
