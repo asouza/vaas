@@ -13,7 +13,7 @@ public class RolesConfigMethodTest {
 	@Test
 	public void shouldGetRolesFromConfiguration() {
 		RolesConfigMethod method = new RolesConfigMethod(new SomeConfiguration());
-		List<Rule> rules = method.rolesFor("/uri");
+		List<Rule> rules = method.rulesFor("/uri");
 		Assert.assertEquals(RULE, rules.get(0));
 	}
 	

@@ -18,13 +18,11 @@ import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.LogoutEvent;
-import br.com.caelum.vraptor.vaas.event.NotLoggedEvent;
 import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 import br.com.caelum.vraptor4.InterceptionException;
 import br.com.caelum.vraptor4.Intercepts;
 import br.com.caelum.vraptor4.controller.ControllerMethod;
 import br.com.caelum.vraptor4.core.InterceptorStack;
-import br.com.caelum.vraptor4.interceptor.ControllerLookupInterceptor;
 import br.com.caelum.vraptor4.interceptor.Interceptor;
 
 @Intercepts
@@ -52,7 +50,7 @@ public class VaasInterceptor implements Interceptor {
 
 	private Object accessConfiguration;
 
-	private RolesConfigMethod rolesConfigMethod;
+	private RolesConfigMethod rulesConfigMethod;
 	
 	@Inject
 	private ServletContext context;
@@ -71,7 +69,7 @@ public class VaasInterceptor implements Interceptor {
 					"You should use just one AccessConfiguration class");
 		}
 		this.accessConfiguration = possibleConfigurations.get();
-		this.rolesConfigMethod = new RolesConfigMethod(this.accessConfiguration);
+		this.rulesConfigMethod = new RolesConfigMethod(this.accessConfiguration);
 	}
 
 
@@ -85,6 +83,7 @@ public class VaasInterceptor implements Interceptor {
 			logoutEvent.fire(new LogoutEvent());
 			return;
 		}
+		
 		if (uri.equals(loginUrl)) {
 			try {
 				httpRequest.login(httpRequest.getParameter("login"),
@@ -97,27 +96,26 @@ public class VaasInterceptor implements Interceptor {
 			return;
 		}
 
-		List<Rule> roles = rolesConfigMethod.rolesFor(uri);
-		if (roles!=null && !roles.isEmpty()) {
-			ArrayList<Rule> rulesNotAllowed = new ArrayList<Rule>();
-			boolean authorized = true;
-			for (Rule rule : roles) {
-				authorized = authorized && rule.isAuthorized();
-				if(!authorized){
-					rulesNotAllowed.add(rule);
-				}
-			}
-			if (authorized) {
-				refreshUserEvent.fire(new RefreshUserEvent());
-				stack.next(method, controllerInstance);
-				return ;
-			}
-			authorizationFailedEvent.fire(new AuthorizationFailedEvent(
-					rulesNotAllowed));
-		}		
-		else{
-			stack.next(method, controllerInstance);
+		List<Rule> rulesNotAllowed = getNotAllowedRules(rulesConfigMethod.rulesFor(uri));
+		if (!rulesNotAllowed.isEmpty()) {
+			authorizationFailedEvent.fire(new AuthorizationFailedEvent(rulesNotAllowed));
+			return ;
 		}
+		
+		refreshUserEvent.fire(new RefreshUserEvent());
+		
+		stack.next(method, controllerInstance);
+	}
+
+
+	private List<Rule> getNotAllowedRules(List<Rule> roles) {
+		List<Rule> rulesNotAllowed = new ArrayList<Rule>();
+		for (Rule rule : roles) {
+			if(!rule.isAuthorized()){
+				rulesNotAllowed.add(rule);
+			}
+		}
+		return rulesNotAllowed;
 	}
 
 	@Override

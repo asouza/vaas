@@ -21,7 +21,7 @@ public class RolesConfigMethod {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<Rule> rolesFor(String uri) {
+	public List<Rule> rulesFor(String uri) {
 		return (List<Rule>) new Mirror()
 				.on(accessConfiguration).invoke().method(rolesConfig)
 				.withArgs(uri);
