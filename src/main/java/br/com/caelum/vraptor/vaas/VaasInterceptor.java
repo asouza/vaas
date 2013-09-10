@@ -24,6 +24,7 @@ import br.com.caelum.vraptor4.InterceptionException;
 import br.com.caelum.vraptor4.Intercepts;
 import br.com.caelum.vraptor4.controller.ControllerMethod;
 import br.com.caelum.vraptor4.core.InterceptorStack;
+import br.com.caelum.vraptor4.interceptor.ControllerLookupInterceptor;
 import br.com.caelum.vraptor4.interceptor.Interceptor;
 
 @Intercepts
@@ -38,9 +39,6 @@ public class VaasInterceptor implements Interceptor {
 
 	@Inject
 	private Event<AuthorizationFailedEvent> authorizationFailedEvent;
-
-	@Inject
-	private Event<NotLoggedEvent> notLoggedEvent;
 
 	@Inject
 	private Event<RefreshUserEvent> refreshUserEvent;
@@ -80,11 +78,14 @@ public class VaasInterceptor implements Interceptor {
 	@Override
 	public void intercept(InterceptorStack stack, ControllerMethod method,
 			Object controllerInstance) throws InterceptionException {
-		if (httpRequest.getRequestURI().equals(logoutUrl)) {
+		String context = httpRequest.getServletContext().getContextPath();
+		String uri = httpRequest.getRequestURI().substring(context.length());
+		
+		if (uri.equals(logoutUrl)) {
 			logoutEvent.fire(new LogoutEvent());
 			return;
 		}
-		if (httpRequest.getRequestURI().equals(loginUrl)) {
+		if (uri.equals(loginUrl)) {
 			try {
 				httpRequest.login(httpRequest.getParameter("login"),
 						httpRequest.getParameter("password"));
@@ -96,12 +97,8 @@ public class VaasInterceptor implements Interceptor {
 			return;
 		}
 
-		if (httpRequest.getUserPrincipal() == null) {
-			notLoggedEvent.fire(new NotLoggedEvent());
-			return;
-		}
-		List<Rule> roles = rolesConfigMethod.rolesFor(httpRequest.getRequestURI());
-		if (!roles.isEmpty()) {
+		List<Rule> roles = rolesConfigMethod.rolesFor(uri);
+		if (roles!=null && !roles.isEmpty()) {
 			ArrayList<Rule> rulesNotAllowed = new ArrayList<Rule>();
 			boolean authorized = true;
 			for (Rule rule : roles) {
@@ -112,16 +109,22 @@ public class VaasInterceptor implements Interceptor {
 			}
 			if (authorized) {
 				refreshUserEvent.fire(new RefreshUserEvent());
-				stack.next(method, controllerInstance);	
+				stack.next(method, controllerInstance);
+				return ;
 			}
 			authorizationFailedEvent.fire(new AuthorizationFailedEvent(
 					rulesNotAllowed));
 		}		
+		else{
+			stack.next(method, controllerInstance);
+		}
 	}
 
 	@Override
 	public boolean accepts(ControllerMethod method) {
 		return true;
 	}
+	
+
 
 }
