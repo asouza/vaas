@@ -112,7 +112,7 @@ public class VaasInterceptor implements Interceptor {
 			}
 			if (authorized) {
 				refreshUserEvent.fire(new RefreshUserEvent());
-				stack.next(method, controllerInstance);
+				stack.next(method, controllerInstance);	
 			}
 			authorizationFailedEvent.fire(new AuthorizationFailedEvent(
 					rulesNotAllowed));

@@ -8,6 +8,7 @@ import javax.enterprise.inject.Vetoed;
 import net.vidageek.mirror.dsl.Mirror;
 import net.vidageek.mirror.list.dsl.Matcher;
 
+@Vetoed
 public class RolesConfigMethod {
 
 	private Object accessConfiguration;
