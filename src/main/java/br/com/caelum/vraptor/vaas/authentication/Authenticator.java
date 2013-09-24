@@ -1,5 +1,7 @@
 package br.com.caelum.vraptor.vaas.authentication;
 
+import javax.enterprise.context.Dependent;
+
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
@@ -9,6 +11,7 @@ import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
 import br.com.caelum.vraptor.vaas.event.LogoutEvent;
 
+@Dependent
 public class Authenticator {
 	@Inject private HttpServletRequest httpRequest;
 	@Inject private Event<AuthenticatedEvent> authenticatedEvent;

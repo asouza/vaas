@@ -44,10 +44,10 @@ public class StaticRolesConfiguration {
 
 	private List<Rule> rulesFor(List<String> roles) {
 		List<Rule> rules = new ArrayList<Rule>();
+		rules.add(loggedRule);
 		for (String role : roles) {
 			rules.add(new SimpleRoleRule(request, role));
 		}
-		rules.add(loggedRule);
 		return rules;
 	}
 
