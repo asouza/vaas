@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Dependent;
+import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
@@ -12,13 +13,14 @@ import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
 import br.com.caelum.vraptor.vaas.AccessConfiguration;
+import br.com.caelum.vraptor.vaas.ConfigurationFinder;
 import br.com.caelum.vraptor.vaas.RolesConfigMethod;
 import br.com.caelum.vraptor.vaas.Rule;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 
 
-@Dependent
+@RequestScoped
 public class PermissionVerifier {
 	@Inject
 	private Event<AuthorizationFailedEvent> authorizationFailedEvent;
@@ -29,17 +31,15 @@ public class PermissionVerifier {
 	private RolesConfigMethod rulesConfigMethod;
 
 	private Object accessConfiguration;
+	
+	@Inject
+	private ConfigurationFinder configurationFinder;
 
 	
-	@SuppressWarnings({ "rawtypes", "serial" })
+	@SuppressWarnings("serial")
 	@PostConstruct
 	public void config() {
-		Instance possibleConfigurations = CDI.current().select(new AnnotationLiteral<AccessConfiguration>() {});
-		if (possibleConfigurations.isAmbiguous()) {
-			throw new RuntimeException(
-					"You should use just one AccessConfiguration class");
-		}
-		this.accessConfiguration = possibleConfigurations.get();
+		this.accessConfiguration = configurationFinder.find(new AnnotationLiteral<AccessConfiguration>() {});
 		this.rulesConfigMethod = new RolesConfigMethod(this.accessConfiguration);
 	}
 
