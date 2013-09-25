@@ -1,5 +1,7 @@
 package br.com.caelum.vraptor.vaas.configurations;
 
+import java.util.Arrays;
+
 import javax.enterprise.inject.Vetoed;
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,5 +27,29 @@ public class SimpleRoleRule implements Rule {
 
 		return valid;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(roles);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		SimpleRoleRule other = (SimpleRoleRule) obj;
+		if (!Arrays.equals(roles, other.roles))
+			return false;
+		return true;
+	}
+	
+	
 
 }
