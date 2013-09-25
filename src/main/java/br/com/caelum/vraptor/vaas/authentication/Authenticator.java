@@ -1,10 +1,12 @@
 package br.com.caelum.vraptor.vaas.authentication;
 
-import javax.enterprise.context.Dependent;
+import java.security.Principal;
+import java.util.Iterator;
 
+import javax.enterprise.context.Dependent;
 import javax.enterprise.event.Event;
+import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
@@ -17,14 +19,20 @@ public class Authenticator {
 	@Inject private Event<AuthenticatedEvent> authenticatedEvent;
 	@Inject private Event<AuthenticateFailedEvent> authenticationFailedEvent;
 	@Inject private Event<LogoutEvent> logoutEvent;
+	@Inject private Instance<AuthProvider> providers;
 
 	public void tryToLogin() {
 		try {
-			httpRequest.login(httpRequest.getParameter("login"),
-					httpRequest.getParameter("password"));
-			authenticatedEvent.fire(new AuthenticatedEvent(httpRequest
-					.getUserPrincipal()));
-		} catch (ServletException e) {
+			Principal principal = null;
+			Iterator<AuthProvider> iterator = providers.iterator();
+			//for while, if one provider returns Principal, is ok.
+			while(iterator.hasNext() && principal==null){
+				AuthProvider provider = iterator.next();
+				principal = provider.authenticate(httpRequest.getParameter("login"), 
+						httpRequest.getParameter("password"));				
+			}
+			authenticatedEvent.fire(new AuthenticatedEvent(principal));
+		} catch (Exception e) {
 			authenticationFailedEvent.fire(new AuthenticateFailedEvent(e));
 		}
 	}

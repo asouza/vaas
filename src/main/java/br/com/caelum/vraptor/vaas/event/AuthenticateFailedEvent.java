@@ -1,14 +1,13 @@
 package br.com.caelum.vraptor.vaas.event;
 
 import javax.enterprise.context.RequestScoped;
-import javax.servlet.ServletException;
 
 @RequestScoped
 public class AuthenticateFailedEvent {
 
-	private ServletException exception;
+	private Exception exception;
 
-	public AuthenticateFailedEvent(ServletException exception) {
+	public AuthenticateFailedEvent(Exception exception) {
 		this.exception = exception;
 	}
 	
