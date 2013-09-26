@@ -16,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.vaas.ConfigurationFinder;
 import br.com.caelum.vraptor.vaas.InstanceProviderList;
 import br.com.caelum.vraptor.vaas.ProviderConfiguration;
-import br.com.caelum.vraptor.vaas.AuthProviders;
 import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
 import br.com.caelum.vraptor.vaas.event.LogoutEvent;

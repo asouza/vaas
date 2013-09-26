@@ -1,4 +1,4 @@
-package br.com.caelum.vraptor.vaas;
+package br.com.caelum.vraptor.vaas.authentication;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,9 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 
-import br.com.caelum.vraptor.vaas.authentication.AuthProvider;
+import br.com.caelum.vraptor.vaas.ConfigurationFinder;
+import br.com.caelum.vraptor.vaas.InstanceProviderList;
+import br.com.caelum.vraptor.vaas.ProviderConfiguration;
 
 @ApplicationScoped
 public class AuthProviders {
