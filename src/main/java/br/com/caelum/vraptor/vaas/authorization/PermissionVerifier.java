@@ -4,11 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
 import javax.enterprise.context.RequestScoped;
-import javax.enterprise.event.Event;
-import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 
@@ -16,16 +12,10 @@ import br.com.caelum.vraptor.vaas.AccessConfiguration;
 import br.com.caelum.vraptor.vaas.ConfigurationFinder;
 import br.com.caelum.vraptor.vaas.RolesConfigMethod;
 import br.com.caelum.vraptor.vaas.Rule;
-import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
-import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
-import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 
 
 @RequestScoped
 public class PermissionVerifier {
-	@Inject
-	private Event<AuthorizationFailedEvent> authorizationFailedEvent;
-
 	private RolesConfigMethod rulesConfigMethod;
 
 	private Object accessConfiguration;
@@ -42,13 +32,9 @@ public class PermissionVerifier {
 	}
 
 	
-	public boolean verifyAccessFor(String uri){
+	public List<Rule> verifyAccessFor(String uri){
 		List<Rule> rulesNotAllowed = getNotAllowedRules(rulesConfigMethod.rulesFor(uri));
-		if (!rulesNotAllowed.isEmpty()) {
-			authorizationFailedEvent.fire(new AuthorizationFailedEvent(rulesNotAllowed));
-			return false;
-		}		
-		return true;
+		return rulesNotAllowed;
 
 	}
 

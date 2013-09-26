@@ -46,6 +46,5 @@ public class Authenticator {
 	
 	public void tryToLogout(){
 		logoutEvent.fire(new LogoutEvent());
-		return;
 	}
 }
