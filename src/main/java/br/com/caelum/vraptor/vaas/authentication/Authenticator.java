@@ -2,39 +2,40 @@ package br.com.caelum.vraptor.vaas.authentication;
 
 import java.security.Principal;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.context.Dependent;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
+import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import br.com.caelum.vraptor.vaas.ConfigurationFinder;
+import br.com.caelum.vraptor.vaas.InstanceProviderList;
+import br.com.caelum.vraptor.vaas.ProviderConfiguration;
+import br.com.caelum.vraptor.vaas.AuthProviders;
 import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
 import br.com.caelum.vraptor.vaas.event.LogoutEvent;
 
-@RequestScoped
+@ApplicationScoped
 public class Authenticator {
 	@Inject private HttpServletRequest httpRequest;
 	@Inject private Event<AuthenticatedEvent> authenticatedEvent;
 	@Inject private Event<AuthenticateFailedEvent> authenticationFailedEvent;
 	@Inject private Event<LogoutEvent> logoutEvent;
-	@Inject private Instance<AuthProvider> providers;
-	
-	@PostConstruct
-	public void configure(){
-		
-	}
+	@Inject @InstanceProviderList private List<Instance<AuthProvider>> providers;
 
 	public void tryToLogin() {
 		try {
 			Principal principal = null;
-			Iterator<AuthProvider> iterator = providers.iterator();
+			Iterator<Instance<AuthProvider>> iterator = providers.iterator();
 			//for while, if one provider returns Principal, is ok.
 			while(iterator.hasNext() && principal==null){
-				AuthProvider provider = iterator.next();
+				AuthProvider provider = iterator.next().get();
 				principal = provider.authenticate(httpRequest.getParameter("login"), 
 						httpRequest.getParameter("password"));				
 			}

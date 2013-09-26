@@ -39,7 +39,7 @@ public class PermissionVerifier {
 	@SuppressWarnings("serial")
 	@PostConstruct
 	public void config() {
-		this.accessConfiguration = configurationFinder.find(new AnnotationLiteral<AccessConfiguration>() {});
+		this.accessConfiguration = configurationFinder.findOne(new AnnotationLiteral<AccessConfiguration>() {}).get();
 		this.rulesConfigMethod = new RolesConfigMethod(this.accessConfiguration);
 	}
 
