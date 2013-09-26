@@ -2,12 +2,15 @@ package br.com.caelum.vraptor.vaas;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.vaas.authentication.Authenticator;
+import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
 import br.com.caelum.vraptor.vaas.authorization.PermissionVerifier;
+import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 import br.com.caelum.vraptor.InterceptionException;
 import br.com.caelum.vraptor.Intercepts;
 import br.com.caelum.vraptor.controller.ControllerMethod;
@@ -20,7 +23,9 @@ public class VaasInterceptor implements Interceptor {
 	@Inject private PermissionVerifier permissions;
 	@Inject private Authenticator auth;
 	@Inject	private ServletContext context;
-	@Inject private HttpServletRequest httpRequest;
+	@Inject private HttpServletRequest httpRequest;	
+	@Inject private Event<RefreshUserEvent> refreshUserEvent;		
+	@Inject private VaasPrincipalSession principalSession;	
 	
 	private String loginUrl;
 	private String logoutUrl;
@@ -45,9 +50,14 @@ public class VaasInterceptor implements Interceptor {
 		if(uri.equals(logoutUrl)){
 			auth.tryToLogout();
 			return;
-		}
+		}			
 		
-		if(permissions.verifyAccessFor(uri)) stack.next(method, controllerInstance);
+		if(permissions.verifyAccessFor(uri)){
+			if(principalSession.isLogged()){
+				refreshUserEvent.fire(new RefreshUserEvent());
+			}
+			stack.next(method, controllerInstance);
+		}
 	}
 
 	@Override

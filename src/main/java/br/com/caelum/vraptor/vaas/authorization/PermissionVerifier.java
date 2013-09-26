@@ -26,12 +26,6 @@ public class PermissionVerifier {
 	@Inject
 	private Event<AuthorizationFailedEvent> authorizationFailedEvent;
 
-	@Inject
-	private Event<RefreshUserEvent> refreshUserEvent;
-	
-	@Inject
-	private VaasPrincipalSession principalSession; 
-
 	private RolesConfigMethod rulesConfigMethod;
 
 	private Object accessConfiguration;
@@ -53,11 +47,7 @@ public class PermissionVerifier {
 		if (!rulesNotAllowed.isEmpty()) {
 			authorizationFailedEvent.fire(new AuthorizationFailedEvent(rulesNotAllowed));
 			return false;
-		}
-		
-		if(principalSession.isLogged()){
-			refreshUserEvent.fire(new RefreshUserEvent());
-		}
+		}		
 		return true;
 
 	}
