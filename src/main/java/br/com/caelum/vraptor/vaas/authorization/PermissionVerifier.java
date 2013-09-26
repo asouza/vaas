@@ -16,6 +16,7 @@ import br.com.caelum.vraptor.vaas.AccessConfiguration;
 import br.com.caelum.vraptor.vaas.ConfigurationFinder;
 import br.com.caelum.vraptor.vaas.RolesConfigMethod;
 import br.com.caelum.vraptor.vaas.Rule;
+import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 
@@ -27,6 +28,9 @@ public class PermissionVerifier {
 
 	@Inject
 	private Event<RefreshUserEvent> refreshUserEvent;
+	
+	@Inject
+	private VaasPrincipalSession principalSession; 
 
 	private RolesConfigMethod rulesConfigMethod;
 
@@ -50,7 +54,10 @@ public class PermissionVerifier {
 			authorizationFailedEvent.fire(new AuthorizationFailedEvent(rulesNotAllowed));
 			return false;
 		}
-		refreshUserEvent.fire(new RefreshUserEvent());
+		
+		if(principalSession.isLogged()){
+			refreshUserEvent.fire(new RefreshUserEvent());
+		}
 		return true;
 
 	}
