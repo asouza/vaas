@@ -2,19 +2,19 @@ package br.com.caelum.vraptor.vaas.configurations;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.vaas.Rule;
+import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
 
 @RequestScoped
 public class LoggedRule implements Rule{
 
 	@Inject
-	private HttpServletRequest httpRequest;
+	private VaasPrincipalSession principalSession;
 
 	@Override
 	public boolean isAuthorized() {
-		return httpRequest.getUserPrincipal() != null;
+		return principalSession.isLogged();
 	}
 
 	
