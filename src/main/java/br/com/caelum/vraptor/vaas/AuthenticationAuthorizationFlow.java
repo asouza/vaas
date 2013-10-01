@@ -77,12 +77,12 @@ public class AuthenticationAuthorizationFlow {
 		}
 
 		List<Rule> rulesNotAllowed = permissions.verifyAccessFor(uri);
+		
+		maybeRefreshUser();
 		if (!rulesNotAllowed.isEmpty()) {
-			maybeRefreshUser();
 			authorizationFailedEvent.fire(new AuthorizationFailedEvent(
 					rulesNotAllowed));
 		} else {
-			maybeRefreshUser();
 			frameworkFlow.run();
 		}
 

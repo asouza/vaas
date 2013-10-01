@@ -4,18 +4,13 @@ import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
-import br.com.caelum.vraptor.vaas.ConfigurationFinder;
 import br.com.caelum.vraptor.vaas.InstanceProviderList;
-import br.com.caelum.vraptor.vaas.ProviderConfiguration;
 import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
 import br.com.caelum.vraptor.vaas.event.LogoutEvent;

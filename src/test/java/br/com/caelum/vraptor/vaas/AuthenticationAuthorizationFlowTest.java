@@ -25,6 +25,7 @@ import br.com.caelum.vraptor.vaas.authentication.Authenticator;
 import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
 import br.com.caelum.vraptor.vaas.authorization.PermissionVerifier;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
+import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationAuthorizationFlowTest {
@@ -35,6 +36,8 @@ public class AuthenticationAuthorizationFlowTest {
 	@Mock private PermissionVerifier permissions;
 	@Mock private VaasPrincipalSession principalSession;
 	@Mock private Event<AuthorizationFailedEvent> authorizationFailed;
+	@Mock private Event<RefreshUserEvent> refreshUserEvent;
+
 
 	private AuthenticationAuthorizationFlow flow;
 	private static final String LOGIN_URI = "login_uri";
@@ -52,7 +55,7 @@ public class AuthenticationAuthorizationFlowTest {
 		when(permissions.verifyAccessFor(NOT_ALLOWED_URI)).thenReturn(asList(someRule));
 		when(principalSession.isLogged()).thenReturn(false);
 		
-		flow = new AuthenticationAuthorizationFlow(permissions, auth, context, request, null, principalSession, authorizationFailed, null, null);
+		flow = new AuthenticationAuthorizationFlow(permissions, auth, context, request, refreshUserEvent, principalSession, authorizationFailed, null, null);
 		flow.config();
 	}
 	
@@ -103,6 +106,26 @@ public class AuthenticationAuthorizationFlowTest {
 		flow.intercept(null);
 		
 		verify(authorizationFailed).fire(Mockito.any(AuthorizationFailedEvent.class));
+	}
+	
+	@Test
+	public void shouldRefreshUser() {
+		when(request.getRequestURI()).thenReturn(NOT_ALLOWED_URI);
+		when(principalSession.isLogged()).thenReturn(true);
+		
+		flow.intercept(null);
+		
+		verify(refreshUserEvent).fire(Mockito.any(RefreshUserEvent.class));
+	}
+	
+	@Test
+	public void shouldNotRefreshUser() {
+		when(request.getRequestURI()).thenReturn(NOT_ALLOWED_URI);
+		when(principalSession.isLogged()).thenReturn(false);
+		
+		flow.intercept(null);
+		
+		verify(refreshUserEvent, never()).fire(Mockito.any(RefreshUserEvent.class));
 	}
 
 }
