@@ -24,28 +24,42 @@ import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 @ApplicationScoped
 public class AuthenticationAuthorizationFlow {
 
-	@Inject
+	protected static final String LOGOUT_URL_PARAMETER = "logoutUrl";
+	protected static final String LOGIN_URL_PARAMETER = "loginUrl";
 	private PermissionVerifier permissions;
-	@Inject
 	private Authenticator auth;
-	@Inject
 	private ServletContext context;
-	@Inject
 	private HttpServletRequest httpRequest;
-	@Inject
 	private Event<RefreshUserEvent> refreshUserEvent;
-	@Inject
 	private VaasPrincipalSession principalSession;
-	@Inject
 	private Event<AuthorizationFailedEvent> authorizationFailedEvent;
 
 	private String loginUrl;
 	private String logoutUrl;
+	
+	@Inject
+	public AuthenticationAuthorizationFlow(PermissionVerifier permissions,
+			Authenticator auth, ServletContext context,
+			HttpServletRequest httpRequest,
+			Event<RefreshUserEvent> refreshUserEvent,
+			VaasPrincipalSession principalSession,
+			Event<AuthorizationFailedEvent> authorizationFailedEvent,
+			String loginUrl, String logoutUrl) {
+		this.permissions = permissions;
+		this.auth = auth;
+		this.context = context;
+		this.httpRequest = httpRequest;
+		this.refreshUserEvent = refreshUserEvent;
+		this.principalSession = principalSession;
+		this.authorizationFailedEvent = authorizationFailedEvent;
+		this.loginUrl = loginUrl;
+		this.logoutUrl = logoutUrl;
+	}
 
 	@PostConstruct
 	public void config() {
-		this.loginUrl = context.getInitParameter("loginUrl");
-		this.logoutUrl = context.getInitParameter("logoutUrl");
+		this.loginUrl = context.getInitParameter(LOGIN_URL_PARAMETER);
+		this.logoutUrl = context.getInitParameter(LOGOUT_URL_PARAMETER);
 	}
 	
 	public void intercept(Runnable frameworkFlow) {
