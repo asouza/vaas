@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.vaas.Rule;
 
 @Vetoed
-public class SimpleRoleRule implements Rule {
+public class SimpleRolesRule implements Rule {
 
 	private HttpServletRequest request;
 	private String[] roles;
 
-	public SimpleRoleRule(HttpServletRequest request,String... roles) {
+	public SimpleRolesRule(HttpServletRequest request,String... roles) {
 		this.request = request;
 		this.roles = roles;
 	}
@@ -44,7 +44,7 @@ public class SimpleRoleRule implements Rule {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		SimpleRoleRule other = (SimpleRoleRule) obj;
+		SimpleRolesRule other = (SimpleRolesRule) obj;
 		if (!Arrays.equals(roles, other.roles))
 			return false;
 		return true;

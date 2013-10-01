@@ -18,7 +18,7 @@ import static java.util.Arrays.asList;
 import br.com.caelum.vraptor.vaas.Rule;
 import br.com.caelum.vraptor.vaas.configurations.LoggedRule;
 import br.com.caelum.vraptor.vaas.configurations.RolesMapping;
-import br.com.caelum.vraptor.vaas.configurations.SimpleRoleRule;
+import br.com.caelum.vraptor.vaas.configurations.SimpleRolesRule;
 import br.com.caelum.vraptor.vaas.configurations.StaticRolesConfiguration;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -56,20 +56,20 @@ public class StaticRolesConfigurationTest {
 	@Test
 	public void shouldFindRulesForSimpleURL() throws Exception {
 		List<? extends Rule> rules = configuration.rules("/");
-		assertTrue(rules.contains(new SimpleRoleRule(request,"admin")));
+		assertTrue(rules.contains(new SimpleRolesRule(request,"admin")));
 	}
 	
 	
 	@Test
 	public void shouldFindRulesForRegexedURL() throws Exception {
 		List<? extends Rule> rules = configuration.rules("/users/1");
-		assertTrue(rules.contains(new SimpleRoleRule(request,"comercial")));
+		assertTrue(rules.contains(new SimpleRolesRule(request,"comercial")));
 	}
 	
 	@Test
 	public void shouldFindRulesForRegexedURL2() throws Exception {
 		List<? extends Rule> rules = configuration.rules("/users/1/task/3");
-		assertTrue(rules.contains(new SimpleRoleRule(request,"employee")));
+		assertTrue(rules.contains(new SimpleRolesRule(request,"employee")));
 	}
 	
 }
