@@ -20,9 +20,9 @@ public class SimpleRolesRule implements Rule {
 
 	@Override
 	public boolean isAuthorized() {
-		boolean valid = true;
+		boolean valid = false;
 		for (String role : roles) {
-			valid = valid && request.isUserInRole(role);
+			valid = valid || request.isUserInRole(role);
 		}
 
 		return valid;
