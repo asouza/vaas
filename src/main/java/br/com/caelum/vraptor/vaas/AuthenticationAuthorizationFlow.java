@@ -37,14 +37,17 @@ public class AuthenticationAuthorizationFlow {
 	private String loginUrl;
 	private String logoutUrl;
 	
+	/** @deprecated CDI eyes only*/
+	protected AuthenticationAuthorizationFlow() {
+	}
+	
 	@Inject
 	public AuthenticationAuthorizationFlow(PermissionVerifier permissions,
 			Authenticator auth, ServletContext context,
 			HttpServletRequest httpRequest,
 			Event<RefreshUserEvent> refreshUserEvent,
 			VaasPrincipalSession principalSession,
-			Event<AuthorizationFailedEvent> authorizationFailedEvent,
-			String loginUrl, String logoutUrl) {
+			Event<AuthorizationFailedEvent> authorizationFailedEvent) {
 		this.permissions = permissions;
 		this.auth = auth;
 		this.context = context;
@@ -52,8 +55,6 @@ public class AuthenticationAuthorizationFlow {
 		this.refreshUserEvent = refreshUserEvent;
 		this.principalSession = principalSession;
 		this.authorizationFailedEvent = authorizationFailedEvent;
-		this.loginUrl = loginUrl;
-		this.logoutUrl = logoutUrl;
 	}
 
 	@PostConstruct

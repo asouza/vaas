@@ -55,7 +55,7 @@ public class AuthenticationAuthorizationFlowTest {
 		when(permissions.verifyAccessFor(NOT_ALLOWED_URI)).thenReturn(asList(someRule));
 		when(principalSession.isLogged()).thenReturn(false);
 		
-		flow = new AuthenticationAuthorizationFlow(permissions, auth, context, request, refreshUserEvent, principalSession, authorizationFailed, null, null);
+		flow = new AuthenticationAuthorizationFlow(permissions, auth, context, request, refreshUserEvent, principalSession, authorizationFailed);
 		flow.config();
 	}
 	
