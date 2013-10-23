@@ -1,0 +1,52 @@
+package br.com.caelum.vraptor.security;
+
+import java.security.Principal;
+
+import javax.enterprise.event.Observes;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.jboss.weld.bean.builtin.ee.HttpServletRequestBean;
+
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.controller.AppController;
+import br.com.caelum.vraptor.controller.AuthController;
+import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
+import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
+import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
+import br.com.caelum.vraptor.vaas.event.LogoutEvent;
+
+public class AuthListener {
+	
+	@Inject
+	private Result result;
+	
+	@Inject
+	private HttpServletRequest request;
+	
+	public void login(@Observes AuthenticatedEvent event){
+		Principal userPrincipal = event.getUserPrincipal();
+		System.out.println("logged as " + userPrincipal);
+		result.redirectTo(AppController.class).main();
+	}
+	
+	public void loginFailed(@Observes AuthenticateFailedEvent event){
+		System.out.println("Authentication failed, redirect to loginPage...");
+		result.include("message",event.getContainerReason());
+		result.redirectTo(AuthController.class).home();
+	}
+	
+	public void logout(@Observes LogoutEvent event) throws ServletException{
+		request.logout();
+		result.redirectTo(AuthController.class).home();
+	}
+	
+	public void unauthorized(@Observes AuthorizationFailedEvent ev){
+		System.out.println(ev.getRolesNotAllowed());
+		result.redirectTo(AuthController.class).unauthorized();
+	}
+	
+	
+
+}
