@@ -10,6 +10,9 @@ import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.caelum.vraptor.vaas.InstanceProviderList;
 import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
@@ -17,6 +20,9 @@ import br.com.caelum.vraptor.vaas.event.LogoutEvent;
 
 @ApplicationScoped
 public class Authenticator {
+
+	private static Logger logger = LoggerFactory.getLogger(Authenticator.class);
+
 	@Inject private HttpServletRequest httpRequest;
 	@Inject private Event<AuthenticatedEvent> authenticatedEvent;
 	@Inject private Event<AuthenticateFailedEvent> authenticationFailedEvent;
@@ -24,19 +30,29 @@ public class Authenticator {
 	@Inject @InstanceProviderList private List<Instance<AuthProvider>> providers;
 
 	public void tryToLogin() {
-		try {
-			Principal principal = null;
-			Iterator<Instance<AuthProvider>> iterator = providers.iterator();
-			//for while, if one provider returns Principal, is ok.
-			while(iterator.hasNext() && principal==null){
+		Principal principal = null;
+		Iterator<Instance<AuthProvider>> iterator = providers.iterator();
+		AuthenticateFailedEvent event = new AuthenticateFailedEvent();
+
+		//for while, if one provider returns Principal, is ok.
+
+		while(iterator.hasNext() && principal==null){
+			try {
 				AuthProvider provider = iterator.next().get();
-				principal = provider.authenticate(httpRequest.getParameter("login"), 
-						httpRequest.getParameter("password"));				
+				principal = provider.authenticate(httpRequest.getParameter("login"),httpRequest.getParameter("password"));				
+			} catch (Exception e) {
+				event.add(e);
 			}
-			authenticatedEvent.fire(new AuthenticatedEvent(principal));
-		} catch (Exception e) {
-			authenticationFailedEvent.fire(new AuthenticateFailedEvent(e));
 		}
+
+		if(principal != null){
+			logger.debug("Login Failed, firing event...");
+			authenticatedEvent.fire(new AuthenticatedEvent(principal));
+		}else{
+			logger.debug("Login Successful, firing event...");
+			authenticationFailedEvent.fire(event);
+		}
+			
 	}
 	
 	public void tryToLogout(){

@@ -33,7 +33,10 @@ public class AuthListener {
 	
 	public void loginFailed(@Observes AuthenticateFailedEvent event){
 		System.out.println("Authentication failed, redirect to loginPage...");
-		result.include("message",event.getContainerReason());
+		if(event.hasErrors()){
+			String message = event.getExceptions().get(0).getMessage(); // just the first message
+			result.include("message",message);
+		}
 		result.redirectTo(AuthController.class).home();
 	}
 	
