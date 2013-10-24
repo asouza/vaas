@@ -1,7 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<artifactId>jaas-support</artifactId>
+	<groupId>br.com.caelum.vraptor.example</groupId>
+	<artifactId>vaas-jaas-example</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 	<dependencies>
@@ -50,7 +52,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>jaas-support</finalName>
+		<finalName>vaas-jaas-example</finalName>
 		<outputDirectory>${basedir}/src/main/webapp/WEB-INF/classes</outputDirectory>
 		<plugins>
 			<plugin>
@@ -128,7 +130,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<groupId>br.com.caelum.vraptor.example</groupId>
-	<version>1.0.0-SNAPSHOT</version>
 </project>
