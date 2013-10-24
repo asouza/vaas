@@ -1,8 +1,11 @@
 package br.com.caelum.vraptor.vaas;
 
+import static br.com.caelum.vraptor.vaas.AuthenticationAuthorizationFlow.DEFAULT_LOGIN_URI;
+import static br.com.caelum.vraptor.vaas.AuthenticationAuthorizationFlow.DEFAULT_LOGOUT_URI;
 import static br.com.caelum.vraptor.vaas.AuthenticationAuthorizationFlow.LOGIN_URL_PARAMETER;
 import static br.com.caelum.vraptor.vaas.AuthenticationAuthorizationFlow.LOGOUT_URL_PARAMETER;
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -26,6 +29,7 @@ import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
 import br.com.caelum.vraptor.vaas.authorization.PermissionVerifier;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
+import br.com.caelum.vraptor.vaas.matchers.VaasMatchers;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationAuthorizationFlowTest {
@@ -38,7 +42,8 @@ public class AuthenticationAuthorizationFlowTest {
 	@Mock private Event<AuthorizationFailedEvent> authorizationFailed;
 	@Mock private Event<RefreshUserEvent> refreshUserEvent;
 
-
+	private final VaasMatchers<AuthenticationAuthorizationFlow> matchers = new VaasMatchers<AuthenticationAuthorizationFlow>();
+	
 	private AuthenticationAuthorizationFlow flow;
 	private static final String LOGIN_URI = "login_uri";
 	private static final String LOGOUT_URI = "logout_uri";
@@ -126,6 +131,32 @@ public class AuthenticationAuthorizationFlowTest {
 		flow.intercept(null);
 		
 		verify(refreshUserEvent, never()).fire(Mockito.any(RefreshUserEvent.class));
+	}
+	
+	@Test
+	public void shouldGetDefaultLoginUri() {
+		when(context.getInitParameter(LOGIN_URL_PARAMETER)).thenReturn(null);
+		flow.config();
+		assertThat(flow, matchers.hasAttributeValue("loginUrl", DEFAULT_LOGIN_URI));
+	}
+	
+	@Test
+	public void shouldGetDefaultLogoutUri() {
+		when(context.getInitParameter(LOGOUT_URL_PARAMETER)).thenReturn(null);
+		flow.config();
+		assertThat(flow, matchers.hasAttributeValue("logoutUrl", DEFAULT_LOGOUT_URI));
+	}
+	
+	@Test
+	public void shouldGetConfiguredLoginUri() {
+		flow.config();
+		assertThat(flow, matchers.hasAttributeValue("loginUrl", LOGIN_URI));
+	}
+	
+	@Test
+	public void shouldGetConfiguredLogoutUri() {
+		flow.config();
+		assertThat(flow, matchers.hasAttributeValue("logoutUrl", LOGOUT_URI));
 	}
 
 }

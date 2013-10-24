@@ -26,6 +26,8 @@ public class AuthenticationAuthorizationFlow {
 
 	protected static final String LOGOUT_URL_PARAMETER = "logoutUrl";
 	protected static final String LOGIN_URL_PARAMETER = "loginUrl";
+	protected static final String DEFAULT_LOGIN_URI = "/login";
+	protected static final String DEFAULT_LOGOUT_URI = "/logout";
 	private PermissionVerifier permissions;
 	private Authenticator auth;
 	private ServletContext context;
@@ -59,10 +61,10 @@ public class AuthenticationAuthorizationFlow {
 
 	@PostConstruct
 	public void config() {
-		this.loginUrl = context.getInitParameter(LOGIN_URL_PARAMETER);
-		this.logoutUrl = context.getInitParameter(LOGOUT_URL_PARAMETER);
+		this.loginUrl = getOrDefault(DEFAULT_LOGIN_URI, LOGIN_URL_PARAMETER);
+		this.logoutUrl = getOrDefault(DEFAULT_LOGOUT_URI, LOGOUT_URL_PARAMETER);
 	}
-	
+
 	public void intercept(Runnable frameworkFlow) {
 		String context = this.context.getContextPath();
 		String uri = httpRequest.getRequestURI().substring(context.length());
@@ -93,5 +95,12 @@ public class AuthenticationAuthorizationFlow {
 		if (principalSession.isLogged()) {
 			refreshUserEvent.fire(new RefreshUserEvent());
 		}
+	}
+	
+	private String getOrDefault(String defaultValue, String webXmlKey) {
+		String configuredValue = context.getInitParameter(webXmlKey);
+		if(configuredValue != null && !configuredValue.isEmpty())
+			return configuredValue;
+		return defaultValue;
 	}
 }
