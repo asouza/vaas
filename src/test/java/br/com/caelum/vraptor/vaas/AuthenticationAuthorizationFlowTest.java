@@ -1,11 +1,8 @@
 package br.com.caelum.vraptor.vaas;
 
-import static br.com.caelum.vraptor.vaas.AuthenticationAuthorizationFlow.DEFAULT_LOGIN_URI;
-import static br.com.caelum.vraptor.vaas.AuthenticationAuthorizationFlow.DEFAULT_LOGOUT_URI;
 import static br.com.caelum.vraptor.vaas.AuthenticationAuthorizationFlow.LOGIN_URL_PARAMETER;
 import static br.com.caelum.vraptor.vaas.AuthenticationAuthorizationFlow.LOGOUT_URL_PARAMETER;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -27,23 +24,21 @@ import org.mockito.runners.MockitoJUnitRunner;
 import br.com.caelum.vraptor.vaas.authentication.Authenticator;
 import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
 import br.com.caelum.vraptor.vaas.authorization.PermissionVerifier;
+import br.com.caelum.vraptor.vaas.configurations.WebXmlConfigurationGetter;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
-import br.com.caelum.vraptor.vaas.matchers.VaasMatchers;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthenticationAuthorizationFlowTest {
 
 	@Mock private ServletContext context;
+	@Mock private WebXmlConfigurationGetter config;
 	@Mock private HttpServletRequest request;
 	@Mock private Authenticator auth;
 	@Mock private PermissionVerifier permissions;
 	@Mock private VaasPrincipalSession principalSession;
 	@Mock private Event<AuthorizationFailedEvent> authorizationFailed;
 	@Mock private Event<RefreshUserEvent> refreshUserEvent;
-
-	private final VaasMatchers<AuthenticationAuthorizationFlow> matchers = new VaasMatchers<AuthenticationAuthorizationFlow>();
-	
 	private AuthenticationAuthorizationFlow flow;
 	private static final String LOGIN_URI = "login_uri";
 	private static final String LOGOUT_URI = "logout_uri";
@@ -53,14 +48,14 @@ public class AuthenticationAuthorizationFlowTest {
 	@Before
 	public void setUp(){
 		when(context.getContextPath()).thenReturn("");
-		when(context.getInitParameter(LOGIN_URL_PARAMETER)).thenReturn(LOGIN_URI);
-		when(context.getInitParameter(LOGOUT_URL_PARAMETER)).thenReturn(LOGOUT_URI);
+		when(config.getOrDefault(Mockito.anyString(), Mockito.eq(LOGIN_URL_PARAMETER))).thenReturn(LOGIN_URI);
+		when(config.getOrDefault(Mockito.anyString(), Mockito.eq(LOGOUT_URL_PARAMETER))).thenReturn(LOGOUT_URI);
 		when(permissions.verifyAccessFor(ALLOWED_URI)).thenReturn(new ArrayList<Rule>());
 		Rule someRule = mock(Rule.class);
 		when(permissions.verifyAccessFor(NOT_ALLOWED_URI)).thenReturn(asList(someRule));
 		when(principalSession.isLogged()).thenReturn(false);
 		
-		flow = new AuthenticationAuthorizationFlow(permissions, auth, context, request, refreshUserEvent, principalSession, authorizationFailed);
+		flow = new AuthenticationAuthorizationFlow(permissions, auth, context, request, refreshUserEvent, principalSession, authorizationFailed, config);
 		flow.config();
 	}
 	
@@ -131,32 +126,6 @@ public class AuthenticationAuthorizationFlowTest {
 		flow.intercept(null);
 		
 		verify(refreshUserEvent, never()).fire(Mockito.any(RefreshUserEvent.class));
-	}
-	
-	@Test
-	public void shouldGetDefaultLoginUri() {
-		when(context.getInitParameter(LOGIN_URL_PARAMETER)).thenReturn(null);
-		flow.config();
-		assertThat(flow, matchers.hasAttributeValue("loginUrl", DEFAULT_LOGIN_URI));
-	}
-	
-	@Test
-	public void shouldGetDefaultLogoutUri() {
-		when(context.getInitParameter(LOGOUT_URL_PARAMETER)).thenReturn(null);
-		flow.config();
-		assertThat(flow, matchers.hasAttributeValue("logoutUrl", DEFAULT_LOGOUT_URI));
-	}
-	
-	@Test
-	public void shouldGetConfiguredLoginUri() {
-		flow.config();
-		assertThat(flow, matchers.hasAttributeValue("loginUrl", LOGIN_URI));
-	}
-	
-	@Test
-	public void shouldGetConfiguredLogoutUri() {
-		flow.config();
-		assertThat(flow, matchers.hasAttributeValue("logoutUrl", LOGOUT_URI));
 	}
 
 }

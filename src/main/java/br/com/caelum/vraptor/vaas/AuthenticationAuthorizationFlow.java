@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.vaas.authentication.Authenticator;
 import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
 import br.com.caelum.vraptor.vaas.authorization.PermissionVerifier;
+import br.com.caelum.vraptor.vaas.configurations.WebXmlConfigurationGetter;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
 
@@ -35,12 +36,14 @@ public class AuthenticationAuthorizationFlow {
 	private Event<RefreshUserEvent> refreshUserEvent;
 	private VaasPrincipalSession principalSession;
 	private Event<AuthorizationFailedEvent> authorizationFailedEvent;
+	private final WebXmlConfigurationGetter config;
 
 	private String loginUrl;
 	private String logoutUrl;
 	
 	/** @deprecated CDI eyes only*/
 	protected AuthenticationAuthorizationFlow() {
+		this(null, null, null, null, null, null, null, null);
 	}
 	
 	@Inject
@@ -49,7 +52,8 @@ public class AuthenticationAuthorizationFlow {
 			HttpServletRequest httpRequest,
 			Event<RefreshUserEvent> refreshUserEvent,
 			VaasPrincipalSession principalSession,
-			Event<AuthorizationFailedEvent> authorizationFailedEvent) {
+			Event<AuthorizationFailedEvent> authorizationFailedEvent,
+			WebXmlConfigurationGetter config) {
 		this.permissions = permissions;
 		this.auth = auth;
 		this.context = context;
@@ -57,12 +61,13 @@ public class AuthenticationAuthorizationFlow {
 		this.refreshUserEvent = refreshUserEvent;
 		this.principalSession = principalSession;
 		this.authorizationFailedEvent = authorizationFailedEvent;
+		this.config = config;
 	}
 
 	@PostConstruct
 	public void config() {
-		this.loginUrl = getOrDefault(DEFAULT_LOGIN_URI, LOGIN_URL_PARAMETER);
-		this.logoutUrl = getOrDefault(DEFAULT_LOGOUT_URI, LOGOUT_URL_PARAMETER);
+		this.loginUrl = config.getOrDefault(DEFAULT_LOGIN_URI, LOGIN_URL_PARAMETER);
+		this.logoutUrl = config.getOrDefault(DEFAULT_LOGOUT_URI, LOGOUT_URL_PARAMETER);
 	}
 
 	public void intercept(Runnable frameworkFlow) {
@@ -95,12 +100,5 @@ public class AuthenticationAuthorizationFlow {
 		if (principalSession.isLogged()) {
 			refreshUserEvent.fire(new RefreshUserEvent());
 		}
-	}
-	
-	private String getOrDefault(String defaultValue, String webXmlKey) {
-		String configuredValue = context.getInitParameter(webXmlKey);
-		if(configuredValue != null && !configuredValue.isEmpty())
-			return configuredValue;
-		return defaultValue;
 	}
 }
