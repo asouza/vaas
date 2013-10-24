@@ -29,13 +29,13 @@ public class AuthenticationAuthorizationFlow {
 	protected static final String LOGIN_URL_PARAMETER = "loginUrl";
 	protected static final String DEFAULT_LOGIN_URI = "/login";
 	protected static final String DEFAULT_LOGOUT_URI = "/logout";
-	private PermissionVerifier permissions;
-	private Authenticator auth;
-	private ServletContext context;
-	private HttpServletRequest httpRequest;
-	private Event<RefreshUserEvent> refreshUserEvent;
-	private VaasPrincipalSession principalSession;
-	private Event<AuthorizationFailedEvent> authorizationFailedEvent;
+	private final PermissionVerifier permissions;
+	private final Authenticator auth;
+	private final ServletContext context;
+	private final HttpServletRequest httpRequest;
+	private final Event<RefreshUserEvent> refreshUserEvent;
+	private final VaasPrincipalSession principalSession;
+	private final Event<AuthorizationFailedEvent> authorizationFailedEvent;
 	private final WebXmlConfigurationGetter config;
 
 	private String loginUrl;
