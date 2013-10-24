@@ -10,7 +10,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.vaas.authentication.Authenticator;
-import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
+import br.com.caelum.vraptor.vaas.authentication.VaasSession;
 import br.com.caelum.vraptor.vaas.authorization.PermissionVerifier;
 import br.com.caelum.vraptor.vaas.configurations.WebXmlConfigurationGetter;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
@@ -34,7 +34,7 @@ public class AuthenticationAuthorizationFlow {
 	private final ServletContext context;
 	private final HttpServletRequest httpRequest;
 	private final Event<RefreshUserEvent> refreshUserEvent;
-	private final VaasPrincipalSession principalSession;
+	private final VaasSession principalSession;
 	private final Event<AuthorizationFailedEvent> authorizationFailedEvent;
 	private final WebXmlConfigurationGetter config;
 
@@ -51,7 +51,7 @@ public class AuthenticationAuthorizationFlow {
 			Authenticator auth, ServletContext context,
 			HttpServletRequest httpRequest,
 			Event<RefreshUserEvent> refreshUserEvent,
-			VaasPrincipalSession principalSession,
+			VaasSession principalSession,
 			Event<AuthorizationFailedEvent> authorizationFailedEvent,
 			WebXmlConfigurationGetter config) {
 		this.permissions = permissions;

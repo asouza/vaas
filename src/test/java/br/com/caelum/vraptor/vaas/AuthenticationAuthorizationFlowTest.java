@@ -22,7 +22,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.caelum.vraptor.vaas.authentication.Authenticator;
-import br.com.caelum.vraptor.vaas.authentication.VaasPrincipalSession;
+import br.com.caelum.vraptor.vaas.authentication.VaasSession;
 import br.com.caelum.vraptor.vaas.authorization.PermissionVerifier;
 import br.com.caelum.vraptor.vaas.configurations.WebXmlConfigurationGetter;
 import br.com.caelum.vraptor.vaas.event.AuthorizationFailedEvent;
@@ -36,7 +36,7 @@ public class AuthenticationAuthorizationFlowTest {
 	@Mock private HttpServletRequest request;
 	@Mock private Authenticator auth;
 	@Mock private PermissionVerifier permissions;
-	@Mock private VaasPrincipalSession principalSession;
+	@Mock private VaasSession principalSession;
 	@Mock private Event<AuthorizationFailedEvent> authorizationFailed;
 	@Mock private Event<RefreshUserEvent> refreshUserEvent;
 	private AuthenticationAuthorizationFlow flow;
