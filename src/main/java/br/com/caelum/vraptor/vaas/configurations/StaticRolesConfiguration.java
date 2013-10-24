@@ -50,7 +50,7 @@ public class StaticRolesConfiguration {
 	private List<Rule> rulesFor(List<String> roles) {
 		List<Rule> rules = new ArrayList<Rule>();
 		rules.add(loggedRule);
-		rules.add(new SimpleRolesRule(request, roles.toArray(new String[] {})));
+		rules.add(new JAASRolesRule(request, roles.toArray(new String[] {})));
 		return rules;
 	}
 
