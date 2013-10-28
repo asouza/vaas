@@ -35,27 +35,29 @@ public class Authenticator {
 		AuthenticateFailedEvent event = new AuthenticateFailedEvent();
 
 		//for while, if one provider returns Principal, is ok.
-
 		while(iterator.hasNext() && principal==null){
 			try {
 				AuthProvider provider = iterator.next().get();
-				principal = provider.authenticate(httpRequest.getParameter("login"),httpRequest.getParameter("password"));				
+				logger.debug("trying to login using {}", provider);
+				principal = provider.authenticate(httpRequest.getParameter("login"),httpRequest.getParameter("password"));
+				
 			} catch (Exception e) {
 				event.add(e);
 			}
 		}
 
 		if(principal != null){
-			logger.debug("Login Failed, firing event...");
+			logger.debug("Login successful, firing the AuthenticatedEvent event");
 			authenticatedEvent.fire(new AuthenticatedEvent(principal));
 		}else{
-			logger.debug("Login Successful, firing event...");
+			logger.debug("Login failed, firing the AuthenticateFailedEvent event");
 			authenticationFailedEvent.fire(event);
 		}
 			
 	}
 	
 	public void tryToLogout(){
+		logger.debug("Firing the LogoutEvent event");
 		logoutEvent.fire(new LogoutEvent());
 	}
 }

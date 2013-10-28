@@ -9,6 +9,9 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import br.com.caelum.vraptor.vaas.authentication.Authenticator;
 import br.com.caelum.vraptor.vaas.authentication.VaasSession;
 import br.com.caelum.vraptor.vaas.authorization.PermissionVerifier;
@@ -24,6 +27,8 @@ import br.com.caelum.vraptor.vaas.event.RefreshUserEvent;
  */
 @ApplicationScoped
 public class AuthenticationAuthorizationFlow {
+	
+	private static final Logger logger = LoggerFactory.getLogger(AuthenticationAuthorizationFlow.class);
 
 	protected static final String LOGOUT_URL_PARAMETER = "logoutUrl";
 	protected static final String LOGIN_URL_PARAMETER = "loginUrl";
@@ -75,11 +80,13 @@ public class AuthenticationAuthorizationFlow {
 		String uri = httpRequest.getRequestURI().substring(context.length());
 
 		if (uri.equals(loginUrl)) {
+			logger.debug("Found the login url ({}), trying to loggin...", loginUrl);
 			auth.tryToLogin();
 			return;
 		}
 
 		if (uri.equals(logoutUrl)) {
+			logger.debug("Found the logout url ({}), trying to logout...", logoutUrl);
 			auth.tryToLogout();
 			return;
 		}
@@ -87,9 +94,11 @@ public class AuthenticationAuthorizationFlow {
 		List<Rule> rulesNotAllowed = permissions.verifyAccessFor(uri);
 		
 		maybeRefreshUser();
+		
 		if (!rulesNotAllowed.isEmpty()) {
-			authorizationFailedEvent.fire(new AuthorizationFailedEvent(
-					rulesNotAllowed));
+			logger.debug("Failed to login due to rules: {}", rulesNotAllowed);
+			logger.debug("firing the AuthorizationFailedEvent event");
+			authorizationFailedEvent.fire(new AuthorizationFailedEvent(rulesNotAllowed));
 		} else {
 			frameworkFlow.run();
 		}
@@ -97,7 +106,9 @@ public class AuthenticationAuthorizationFlow {
 	}
 
 	private void maybeRefreshUser() {
+		
 		if (principalSession.isLogged()) {
+			logger.debug("Firing the  the RefreshUserEvent event");
 			refreshUserEvent.fire(new RefreshUserEvent());
 		}
 	}
