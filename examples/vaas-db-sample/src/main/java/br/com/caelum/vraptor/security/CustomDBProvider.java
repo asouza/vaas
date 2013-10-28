@@ -25,7 +25,7 @@ public class CustomDBProvider implements AuthProvider{
 	public Principal authenticate(String login, String password) throws Exception {
 		
 		try{
-			return em.createQuery("from User u where u.login = :login and u.password = password",User.class)
+			return em.createQuery("from User u where u.login = :login and u.password = :password",User.class)
 					.setParameter("login", login)
 					.setParameter("password", password)
 					.getSingleResult();

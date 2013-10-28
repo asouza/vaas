@@ -46,7 +46,7 @@ public class AuthListener {
 	}
 	
 	public void unauthorized(@Observes AuthorizationFailedEvent ev){
-		System.out.println(ev.getRolesNotAllowed());
+		System.out.println("Unauthorized by:" + ev.getRolesNotAllowed());
 		result.redirectTo(AuthController.class).unauthorized();
 	}
 	

@@ -8,7 +8,7 @@ public class VaasConfiguration implements ProviderConfiguration{
 
 	@Override
 	public Class<? extends AuthProvider>[] providers() {
-		return new Class[]{JAASProvider.class};
+		return new Class[]{CustomDBProvider.class};
 	}
 
 }

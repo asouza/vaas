@@ -1,13 +1,16 @@
 package br.com.caelum.vraptor.security;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Priority;
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.inject.Alternative;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -22,6 +25,7 @@ import br.com.caelum.vraptor.vaas.configurations.RulesConfiguration;
 
 @ApplicationScoped
 @AccessConfiguration
+@Alternative @Priority(500)
 public class CustomRuleConfiguration implements RulesConfiguration {
 	
 	@Inject
@@ -47,9 +51,12 @@ public class CustomRuleConfiguration implements RulesConfiguration {
 	@Override
 	public List<Rule> getRules(String uri) {
 		Set<Role> rolesAllowed = rolesForUrl.get(uri);
-		User loggedUser = (User) userSession.getLoogedUser();
 		
-		return Arrays.asList(loggedRule, new SimpleRoleBasedRule(loggedUser, rolesAllowed));
+		if(rolesAllowed == null){
+			return Collections.emptyList();
+		}
+		
+		return Arrays.asList(loggedRule, new SimpleRoleBasedRule(userSession, rolesAllowed));
 	}
 
 }

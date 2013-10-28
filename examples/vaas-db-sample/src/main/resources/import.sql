@@ -35,4 +35,4 @@ insert into URLAccessRole_Role(URLAccessRole_id,allowedRoles_id) values(1,1);
 insert into URLAccessRole_Role(URLAccessRole_id,allowedRoles_id) values(1,2);
 insert into URLAccessRole_Role(URLAccessRole_id,allowedRoles_id) values(2,1);
 insert into URLAccessRole_Role(URLAccessRole_id,allowedRoles_id) values(2,2);
-insert into URLAccessRole_Role(URLAccessRole_id,allowedRoles_id) values(3,2);
+insert into URLAccessRole_Role(URLAccessRole_id,allowedRoles_id) values(3,1);

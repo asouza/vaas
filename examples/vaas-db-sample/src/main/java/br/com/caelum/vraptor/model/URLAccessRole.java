@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -18,7 +19,7 @@ public class URLAccessRole {
 
 	private String url;
 
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	private Set<Role> allowedRoles = new HashSet<Role>();
 
 	public Long getId() {

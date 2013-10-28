@@ -1,16 +1,18 @@
 package br.com.caelum.vraptor.model;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
 @Entity
-public class User implements Principal{
+public class User implements Principal, Serializable{
 
 	@Id
 	@GeneratedValue
@@ -19,7 +21,7 @@ public class User implements Principal{
 	private String userName;
 	private String password;
 
-	@ManyToMany
+	@ManyToMany(fetch=FetchType.EAGER)
 	private Set<Role> roles = new HashSet<Role>();
 	
 	@Override
