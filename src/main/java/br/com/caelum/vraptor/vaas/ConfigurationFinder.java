@@ -27,7 +27,6 @@ public class ConfigurationFinder {
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public <T> Instance<T> findOne(Class<? extends T> implementationClass, AnnotationLiteral<?>... qualifiers) {
 		Instance possibleConfigurations = CDI.current().select(implementationClass, qualifiers);
-		isAmbiguos(possibleConfigurations);
 		return possibleConfigurations;
 	}
 }
