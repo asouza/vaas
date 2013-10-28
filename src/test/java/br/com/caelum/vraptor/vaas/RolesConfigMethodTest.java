@@ -7,6 +7,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import br.com.caelum.vraptor.vaas.configurations.RulesConfiguration;
+
 public class RolesConfigMethodTest {
 	private static final SomeRule RULE = new SomeRule();
 
@@ -17,10 +19,10 @@ public class RolesConfigMethodTest {
 		Assert.assertEquals(RULE, rules.get(0));
 	}
 	
-	static class SomeConfiguration {
+	static class SomeConfiguration implements RulesConfiguration{
 
 		@RolesConfiguration
-		public List<Rule> getRoles(String uri) {
+		public List<Rule> getRules(String uri) {
 			return Arrays.<Rule>asList(RULE);
 		}
 		

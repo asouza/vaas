@@ -55,20 +55,20 @@ public class StaticRolesConfigurationTest {
 	
 	@Test
 	public void shouldFindRulesForSimpleURL() throws Exception {
-		List<? extends Rule> rules = configuration.rules("/");
+		List<? extends Rule> rules = configuration.getRules("/");
 		assertTrue(rules.contains(new JAASRolesRule(request,"admin")));
 	}
 	
 	
 	@Test
 	public void shouldFindRulesForRegexedURL() throws Exception {
-		List<? extends Rule> rules = configuration.rules("/users/1");
+		List<? extends Rule> rules = configuration.getRules("/users/1");
 		assertTrue(rules.contains(new JAASRolesRule(request,"comercial")));
 	}
 	
 	@Test
 	public void shouldFindRulesForRegexedURL2() throws Exception {
-		List<? extends Rule> rules = configuration.rules("/users/1/task/3");
+		List<? extends Rule> rules = configuration.getRules("/users/1/task/3");
 		assertTrue(rules.contains(new JAASRolesRule(request,"employee")));
 	}
 	

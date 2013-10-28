@@ -12,14 +12,13 @@ import br.com.caelum.vraptor.vaas.AccessConfiguration;
 import br.com.caelum.vraptor.vaas.ConfigurationFinder;
 import br.com.caelum.vraptor.vaas.RolesConfigMethod;
 import br.com.caelum.vraptor.vaas.Rule;
+import br.com.caelum.vraptor.vaas.configurations.RulesConfiguration;
 
 
 @RequestScoped
 public class PermissionVerifier {
 	private RolesConfigMethod rulesConfigMethod;
 
-	private Object accessConfiguration;
-	
 	@Inject
 	private ConfigurationFinder configurationFinder;
 
@@ -27,10 +26,10 @@ public class PermissionVerifier {
 	@SuppressWarnings("serial")
 	@PostConstruct
 	public void config() {
-		this.accessConfiguration = configurationFinder.findOne(new AnnotationLiteral<AccessConfiguration>() {}).get();
-		this.rulesConfigMethod = new RolesConfigMethod(this.accessConfiguration);
+		RulesConfiguration accessConfiguration = configurationFinder.findOne(RulesConfiguration.class,
+															new AnnotationLiteral<AccessConfiguration>() {}).get();
+		this.rulesConfigMethod = new RolesConfigMethod(accessConfiguration);
 	}
-
 	
 	public List<Rule> verifyAccessFor(String uri){
 		List<Rule> rulesNotAllowed = getNotAllowedRules(rulesConfigMethod.rulesFor(uri));

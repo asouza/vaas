@@ -18,9 +18,9 @@ import br.com.caelum.vraptor.vaas.Rule;
 
 @ApplicationScoped
 @AccessConfiguration
-public class StaticRolesConfiguration {
+public class StaticRolesConfiguration implements RulesConfiguration {
 
-	private final Map<String, List<? extends Rule>> uriRules = new HashMap<String, List<? extends Rule>>();
+	private final Map<String, List<Rule>> uriRules = new HashMap<String, List<Rule>>();
 
 	private LoggedRule loggedRule;
 	private HttpServletRequest request;
@@ -54,9 +54,13 @@ public class StaticRolesConfiguration {
 		return rules;
 	}
 
+	/* (non-Javadoc)
+	 * @see br.com.caelum.vraptor.vaas.configurations.RulesConfiguration#rules(java.lang.String)
+	 */
+	@Override
 	@RolesConfiguration
-	public List<? extends Rule> rules(String uri) {
-		List<? extends Rule> rules = uriRules.get(uri);
+	public List<Rule> getRules(String uri) {
+		List<Rule> rules = uriRules.get(uri);
 		if (rules==null) {
 			String regexKey = tryToFindKeyBasedOnRegex(uri);
 			rules = uriRules.get(regexKey);
