@@ -17,7 +17,7 @@ public class RolesConfigMethod {
 
 	@SuppressWarnings("unchecked")
 	public List<Rule> rulesFor(String uri) {
-		return (List<Rule>) accessConfiguration.getRules(uri);
+		return accessConfiguration.getRules(uri);
 	}
 
 }

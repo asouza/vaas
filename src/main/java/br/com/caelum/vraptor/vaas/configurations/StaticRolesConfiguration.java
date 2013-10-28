@@ -1,6 +1,7 @@
 package br.com.caelum.vraptor.vaas.configurations;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -65,7 +66,11 @@ public class StaticRolesConfiguration implements RulesConfiguration {
 			String regexKey = tryToFindKeyBasedOnRegex(uri);
 			rules = uriRules.get(regexKey);
 		}
-		return rules;
+		return firstNonNull(rules, new ArrayList<Rule>());
+	}
+	
+	private <T> T firstNonNull(T first, T other){
+		return first != null? first : other;
 	}
 
 	private String tryToFindKeyBasedOnRegex(String uri) {

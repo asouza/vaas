@@ -50,9 +50,7 @@ public class PermissionVerifier {
 
 	private List<Rule> getNotAllowedRules(List<Rule> roles) {
 		List<Rule> rulesNotAllowed = new ArrayList<Rule>();
-		if (roles == null) {
-			return rulesNotAllowed;
-		}
+
 		for (Rule rule : roles) {
 			if(!rule.isAuthorized()){
 				rulesNotAllowed.add(rule);
