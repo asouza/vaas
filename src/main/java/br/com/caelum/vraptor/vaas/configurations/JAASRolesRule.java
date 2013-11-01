@@ -49,6 +49,13 @@ public class JAASRolesRule implements Rule {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "JAASRolesRule [roles=" + Arrays.toString(roles) + "]";
+	}
+	
+	
 	
 	
 

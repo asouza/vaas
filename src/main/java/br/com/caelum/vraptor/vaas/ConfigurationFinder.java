@@ -5,8 +5,6 @@ import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.spi.CDI;
 import javax.enterprise.util.AnnotationLiteral;
 
-import br.com.caelum.vraptor.vaas.authentication.AuthProvider;
-
 @ApplicationScoped
 public class ConfigurationFinder {
 

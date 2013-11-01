@@ -1,11 +1,9 @@
 package br.com.caelum.vraptor.vaas.configurations;
 
-import java.util.List;
-
-import br.com.caelum.vraptor.vaas.Rule;
+import br.com.caelum.vraptor.vaas.RulesByURL;
 
 public interface RulesConfiguration {
 
-	public abstract List<Rule> getRules(String uri);
+	public abstract RulesByURL rulesByURL();
 
 }
