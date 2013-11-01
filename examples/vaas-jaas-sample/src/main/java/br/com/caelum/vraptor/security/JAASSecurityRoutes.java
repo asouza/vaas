@@ -1,25 +1,29 @@
 package br.com.caelum.vraptor.security;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
-import br.com.caelum.vraptor.vaas.configurations.RolesMapping;
+import br.com.caelum.vraptor.vaas.RulesByURL;
+import br.com.caelum.vraptor.vaas.configurations.JAASRolesRule;
+import br.com.caelum.vraptor.vaas.configurations.LoggedRule;
+import br.com.caelum.vraptor.vaas.configurations.RulesConfiguration;
 
-public class SecurityRoutes implements RolesMapping {
+@ApplicationScoped
+public class JAASSecurityRoutes implements RulesConfiguration {
 
-	private static Map<String, List<String>> routes = new HashMap<String, List<String>>();
+	@Inject
+	private LoggedRule loggedRule;
+	@Inject
+	private HttpServletRequest request;
 	
-	static{
-		routes.put("/main", Arrays.asList("ROLE_USER","ROLE_ADMIN"));
-		routes.put("/user-page", Arrays.asList("ROLE_USER","ROLE_ADMIN"));
-		routes.put("/admin-page", Arrays.asList("ROLE_ADMIN"));
-	}
-	
-	@Override
-	public Map<String, List<String>> getSimpleRules() {
-		return routes;
+	public RulesByURL rulesByURL() {
+		RulesByURL rulesByURL = new RulesByURL();
+		rulesByURL.defaultRule(loggedRule)
+		.add("/main", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
+		.add("/user-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
+		.add("/admin-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"));
+		return rulesByURL;
 	}
 
 }
