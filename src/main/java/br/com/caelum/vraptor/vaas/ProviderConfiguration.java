@@ -9,5 +9,5 @@ import br.com.caelum.vraptor.vaas.authentication.AuthProvider;
  *
  */
 public interface ProviderConfiguration {
-	public Class<? extends AuthProvider>[] providers();
+	public AuthProviders providers();
 }

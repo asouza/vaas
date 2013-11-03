@@ -14,14 +14,14 @@ import br.com.caelum.vraptor.vaas.InstanceProviderList;
 import br.com.caelum.vraptor.vaas.ProviderConfiguration;
 
 @ApplicationScoped
-public class AuthProviders {
+public class AuthProvidersFactory {
 	@Inject private ProviderConfiguration providerConfiguration;
 	@Inject private ConfigurationFinder configurationFinder;
 	@Produces @InstanceProviderList private List<Instance<AuthProvider>> instancesOfProviders = new ArrayList<Instance<AuthProvider>>();
 	
 	@PostConstruct
 	public void configure(){
-		Class<? extends AuthProvider>[] providersClasses = providerConfiguration.providers();
+		List<Class<? extends AuthProvider>> providersClasses = providerConfiguration.providers().get();
 		for (Class<? extends AuthProvider> providerClass : providersClasses) {
 			Instance<AuthProvider> provider = configurationFinder.findOne(providerClass);
 			instancesOfProviders .add(provider);
