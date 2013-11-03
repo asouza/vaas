@@ -1,9 +1,7 @@
-package br.com.caelum.vraptor.vaas;
+package br.com.caelum.vraptor.vaas.authentication;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import br.com.caelum.vraptor.vaas.authentication.AuthProvider;
 
 
 public class AuthProviders {

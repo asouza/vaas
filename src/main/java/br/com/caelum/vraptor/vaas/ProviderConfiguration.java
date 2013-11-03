@@ -1,6 +1,7 @@
 package br.com.caelum.vraptor.vaas;
 
 import br.com.caelum.vraptor.vaas.authentication.AuthProvider;
+import br.com.caelum.vraptor.vaas.authentication.AuthProviders;
 
 
 /**
