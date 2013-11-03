@@ -32,7 +32,7 @@ public class SimpleRoleBasedRule implements Rule {
 		boolean valid = false;
 
 		if(userSession.isLogged()){
-			User user = (User) userSession.getLoogedUser();	
+			User user = (User) userSession.getLoggedUser();	
 			
 			for (Role role : rolesAllowed) {
 				valid = valid || user.getRoles().contains(role);
