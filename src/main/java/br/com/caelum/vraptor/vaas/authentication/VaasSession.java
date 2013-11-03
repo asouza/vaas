@@ -6,6 +6,6 @@ public interface VaasSession {
 
 	public abstract boolean isLogged();
 
-	public abstract Principal getLoogedUser();
+	public abstract Principal getLoggedUser();
 
 }

@@ -43,7 +43,7 @@ public class VaasPrincipalSession implements VaasSession, Serializable{
 	 * @see br.com.caelum.vraptor.vaas.authentication.VaasSession#getLoogedUser()
 	 */
 	@Override
-	public Principal getLoogedUser() {
+	public Principal getLoggedUser() {
 		return loogedUser;
 	}
 	
