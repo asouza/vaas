@@ -1,7 +1,7 @@
 package br.com.caelum.vraptor.model;
 
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Entity;
@@ -9,6 +9,8 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+
+import br.com.caelum.vraptor.vaas.authorization.Group;
 
 @Entity
 public class URLAccessRole {
@@ -19,8 +21,8 @@ public class URLAccessRole {
 
 	private String url;
 
-	@ManyToMany(fetch=FetchType.EAGER)
-	private Set<Role> allowedRoles = new HashSet<Role>();
+	@ManyToMany(fetch=FetchType.EAGER,targetEntity=Role.class)
+	private Set<Group> allowedRoles = new HashSet<Group>();
 
 	public Long getId() {
 		return id;
@@ -38,12 +40,8 @@ public class URLAccessRole {
 		this.url = url;
 	}
 
-	public Set<Role> getAllowedRoles() {
+	public Collection<Group> getAllowedRoles() {
 		return allowedRoles;
-	}
-
-	public void setAllowedRoles(Set<Role> allowedRoles) {
-		this.allowedRoles = allowedRoles;
 	}
 
 }

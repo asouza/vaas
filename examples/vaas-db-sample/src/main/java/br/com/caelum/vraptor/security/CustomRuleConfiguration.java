@@ -12,6 +12,7 @@ import br.com.caelum.vraptor.vaas.RulesByURL;
 import br.com.caelum.vraptor.vaas.authentication.VaasSession;
 import br.com.caelum.vraptor.vaas.configurations.LoggedRule;
 import br.com.caelum.vraptor.vaas.configurations.RulesConfiguration;
+import br.com.caelum.vraptor.vaas.configurations.VaasRoleRule;
 
 @ApplicationScoped
 public class CustomRuleConfiguration implements RulesConfiguration {
@@ -32,7 +33,7 @@ public class CustomRuleConfiguration implements RulesConfiguration {
 		rulesByURL.defaultRule(loggedRule);
 		List<URLAccessRole> accessRoles = em.createQuery("from URLAccessRole",URLAccessRole.class).getResultList();
 		for (URLAccessRole urlAccessRole : accessRoles) {			
-			rulesByURL.add(urlAccessRole.getUrl(), new SimpleRoleBasedRule(userSession,urlAccessRole.getAllowedRoles()));
+			rulesByURL.add(urlAccessRole.getUrl(), new VaasRoleRule(userSession,urlAccessRole.getAllowedRoles()));
 		}
 	}
 	

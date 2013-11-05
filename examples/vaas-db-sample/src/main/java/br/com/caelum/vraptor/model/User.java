@@ -11,8 +11,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 
+import br.com.caelum.vraptor.vaas.authentication.Authenticable;
+
 @Entity
-public class User implements Principal, Serializable{
+public class User implements Authenticable, Serializable{
 
 	@Id
 	@GeneratedValue
@@ -66,7 +68,7 @@ public class User implements Principal, Serializable{
 		this.password = password;
 	}
 
-	public Set<Role> getRoles() {
+	public Set<Role> getGroups() {
 		return roles;
 	}
 

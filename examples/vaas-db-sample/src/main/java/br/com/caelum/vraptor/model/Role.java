@@ -4,8 +4,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import br.com.caelum.vraptor.vaas.authorization.Group;
+
 @Entity
-public class Role {
+public class Role implements Group{
 
 	@Id
 	@GeneratedValue
