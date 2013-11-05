@@ -7,16 +7,16 @@ import javax.enterprise.context.SessionScoped;
 import br.com.caelum.vraptor.vaas.Rule;
 import br.com.caelum.vraptor.vaas.authentication.Authenticable;
 import br.com.caelum.vraptor.vaas.authentication.VaasSession;
-import br.com.caelum.vraptor.vaas.authorization.Role;
+import br.com.caelum.vraptor.vaas.authorization.Group;
 
 @SessionScoped
 public class VaasRoleRule implements Rule {
 	
 	private VaasSession userSession;
-	private Collection<Role> rolesAllowed;
+	private Collection<Group> rolesAllowed;
 
 
-	public VaasRoleRule(VaasSession userSession, Collection<Role> rolesAllowed) {
+	public VaasRoleRule(VaasSession userSession, Collection<Group> rolesAllowed) {
 		this.userSession = userSession;
 		this.rolesAllowed = rolesAllowed;
 	}
@@ -33,8 +33,8 @@ public class VaasRoleRule implements Rule {
 		if(userSession.isLogged()){
 			Authenticable user = (Authenticable) userSession.getLoggedUser();	
 			
-			for (Role role : rolesAllowed) {
-				valid = valid || user.getRoles().contains(role);
+			for (Group role : rolesAllowed) {
+				valid = valid || user.getGroups().contains(role);
 			}
 		}
 
