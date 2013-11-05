@@ -36,42 +36,41 @@ web.xml:
 You need to declare a Provider that is responsible for authentication. There
 are two steps. First you need to create a class that implements AuthProvider:
 
-		@RequestScoped
-		public class CustomDBProvider implements AuthProvider {
-			
-			@Inject
-			private EntityManager em;
-		
-			@Override
-			public Principal authenticate(String login, String password) throws Exception {
-				
-				try {
-					return em.createQuery("from User u where u.login = :login and u.password = :password",User.class)
-							.setParameter("login", login)
-							.setParameter("password", password)
-							.getSingleResult();
-				} catch(Exception e){
-					return null;
-				}
-			}
-		
-		}
+    @RequestScoped
+    public class CustomDBProvider implements AuthProvider {
 
-Note that the class User must implement the java.security.Princial interface.
+        @Inject
+        private EntityManager em;
+
+        @Override
+        public Principal authenticate(String login, String password) throws Exception {
+            try {
+                return em.createQuery("from User u where u.login = :login and u.password = :password", User.class)
+                    .setParameter("login", login)
+                    .setParameter("password", password)
+                    .getSingleResult();
+            } catch(Exception e) {
+                return null;
+            }
+        }
+
+    }
+
+Note that the class User must implement the Authenticble interface.
 It is also possible to use a provider which is already implemented by VAAS. For
 example, JAASProvider.
 
 Now you need to explain to VAAS to use this AuthProvider. Just create a
 configuration class:
 
-		public class VaasConfiguration implements ProviderConfiguration {
-		
-			@Override
-			public AuthProviders providers() {
-				return new AuthProviders(CustomDBProvider.class);
-			}
-		
-		}
+    public class VaasConfiguration implements ProviderConfiguration {
+    
+        @Override
+        public AuthProviders providers() {
+            return new AuthProviders(CustomDBProvider.class);
+        }
+    
+    }
 
 If you have more than one provider, you could pass a varargs of Class<? extends
 AuthProvider> and the authentication would stop in the first success. 
@@ -81,35 +80,35 @@ AuthProvider> and the authentication would stop in the first success.
 The URL protection on VAAS is based on Rules definitions. Instead of associate Roles as ADMIN,MANAGER and GUEST
 you associate objects that protect URLs. For example, here's a simple Rule definition:
 
-		@SessionScoped
-		public class VaasRoleRule implements Rule {
-	        
-            @Inject		
-			private VaasSession userSession;
-            @Inject
-			private Collection<Group> rolesAllowed;
+    @SessionScoped
+    public class VaasRoleRule implements Rule {
+        
+        @Inject		
+        private VaasSession userSession;
+        @Inject
+        private Collection<Group> rolesAllowed;
+        
+        @Override
+        public boolean isAuthorized() {
             
-			@Override
-			public boolean isAuthorized() {
-				
-				if (rolesAllowed.isEmpty()) {
-					return true;
-				}
-				
-				boolean valid = false;
-		
-				if (userSession.isLogged()) {
-					Authenticable user = (Authenticable) userSession.getLoggedUser();	
-					
-					for (Group role : rolesAllowed) {
-						valid = valid || user.getGroups().contains(role);
-					}
-				}
-		
-				return valid;
-			}
-		
-		}
+            if (rolesAllowed.isEmpty()) {
+                return true;
+            }
+            
+            boolean valid = false;
+    
+            if (userSession.isLogged()) {
+                Authenticable user = (Authenticable) userSession.getLoggedUser();	
+                
+                for (Group role : rolesAllowed) {
+                    valid = valid || user.getGroups().contains(role);
+                }
+            }
+    
+            return valid;
+        }
+    
+    }
 
 Here we have a very simple Rule based on simple Roles. This is a pre-defined Rule of VAAS that is ready
 to use if you follow our interfaces. We have a JAASRule too, if you use JAAS as implementation of this part
@@ -126,46 +125,46 @@ Now you have to bind URLs and Rules.
 		private HttpServletRequest request;
 		
 		public RulesByURL rulesByURL() {
-			RulesByURL rulesByURL = new RulesByURL();
-			rulesByURL.defaultRule(loggedRule)
-			    .add("/main", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
-    			.add("/user-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
-	    		.add("/admin-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"));
-			return rulesByURL;
+            RulesByURL rulesByURL = new RulesByURL();
+            rulesByURL.defaultRule(loggedRule)
+                .add("/main", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
+                .add("/user-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
+                .add("/admin-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"));
+            return rulesByURL;
 		}
 	
 	}
 	
 Above we have a static configuration example. Now let's see a Database configuration example.
 
-		@ApplicationScoped
-		public class CustomRuleConfiguration implements RulesConfiguration {
-			
-			@Inject
-			private EntityManager em;
-			
-			@Inject
-			private LoggedRule loggedRule;
-			
-			@Inject
-			private VaasSession userSession;
-			
-			private RulesByURL rulesByURL = new RulesByURL(); 
-			
-			@PostConstruct
-			public void init(){
-				rulesByURL.defaultRule(loggedRule);
-				List<URLAccessRole> accessRoles = em.createQuery("from URLAccessRole", URLAccessRole.class).getResultList();
-				for (URLAccessRole urlAccessRole : accessRoles) {			
-					rulesByURL.add(urlAccessRole.getUrl(), new VaasRoleRule(userSession, urlAccessRole.getAllowedRoles()));
-				}
-			}
-			
-			public RulesByURL rulesByURL() {
-				return rulesByURL;
-			}
-		
-		}
+    @ApplicationScoped
+    public class CustomRuleConfiguration implements RulesConfiguration {
+        
+        @Inject
+        private EntityManager em;
+        
+        @Inject
+        private LoggedRule loggedRule;
+        
+        @Inject
+        private VaasSession userSession;
+        
+        private RulesByURL rulesByURL = new RulesByURL(); 
+        
+        @PostConstruct
+        public void init(){
+            rulesByURL.defaultRule(loggedRule);
+            List<URLAccessRole> accessRoles = em.createQuery("from URLAccessRole", URLAccessRole.class).getResultList();
+            for (URLAccessRole urlAccessRole : accessRoles) {			
+                rulesByURL.add(urlAccessRole.getUrl(), new VaasRoleRule(userSession, urlAccessRole.getAllowedRoles()));
+            }
+        }
+        
+        public RulesByURL rulesByURL() {
+            return rulesByURL;
+        }
+    
+    }
 		
 For us this is the big thing of vaas. You can decide the way you configure your
 URL's protection. Static, database based or whatever you want. Just implement
@@ -175,37 +174,37 @@ RulesConfiguration and this configuration will be used.
 
 Now we have to handle auth events. Let's see an example.
 
-		public class AuthListener {
-			
-			@Inject
-			private Result result;
-			
-			@Inject
-			private HttpServletRequest request;
-			
-			public void login(@Observes AuthenticatedEvent event) {
-				Principal userPrincipal = event.getUserPrincipal();
-				result.redirectTo(AppController.class).main();
-			}
-			
-			public void loginFailed(@Observes AuthenticateFailedEvent event) {
-				if (event.hasErrors()) {
-					String message = event.getExceptions().get(0).getMessage(); // just the first message
-					result.include("message",message);
-				}
-				result.redirectTo(AuthController.class).home();
-			}
-			
-			public void logout(@Observes LogoutEvent event) throws ServletException {
-				request.logout();
-				result.redirectTo(AuthController.class).home();
-			}
-			
-			public void unauthorized(@Observes AuthorizationFailedEvent ev) {		
-				result.redirectTo(AuthController.class).unauthorized();
-			}
-								
-		}
+    public class AuthListener {
+        
+        @Inject
+        private Result result;
+        
+        @Inject
+        private HttpServletRequest request;
+        
+        public void login(@Observes AuthenticatedEvent event) {
+            Principal userPrincipal = event.getUserPrincipal();
+            result.redirectTo(AppController.class).main();
+        }
+        
+        public void loginFailed(@Observes AuthenticateFailedEvent event) {
+            if (event.hasErrors()) {
+                String message = event.getExceptions().get(0).getMessage(); // just the first message
+                result.include("message",message);
+            }
+            result.redirectTo(AuthController.class).home();
+        }
+        
+        public void logout(@Observes LogoutEvent event) throws ServletException {
+            request.logout();
+            result.redirectTo(AuthController.class).home();
+        }
+        
+        public void unauthorized(@Observes AuthorizationFailedEvent ev) {		
+            result.redirectTo(AuthController.class).unauthorized();
+        }
+                            
+    }
 		
 Just a simple class that uses CDI events!
 
