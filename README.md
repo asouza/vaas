@@ -5,7 +5,7 @@ programatically configuration.
 
 # installing
 
-vraptor-environment.jar can be downloaded from maven's repository, or configured in any compatible tool (check the newest version at http://search.maven.org/):
+vaas can be downloaded from maven's repository, or configured in any compatible tool (check the newest version at http://search.maven.org/):
 
 		<dependency>
 			<groupId>br.com.caelum.vraptor</groupId>
