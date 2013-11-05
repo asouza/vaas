@@ -1,19 +1,26 @@
 package br.com.caelum.vraptor.vaas.authentication;
 
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
 
-public class AuthProviders {
 
-	private List<Class<? extends AuthProvider>> providers = new ArrayList<Class<? extends AuthProvider>>();
+public class AuthProviders implements Iterable<Class<? extends AuthProvider>>{
 
-	public AuthProviders(Class<? extends AuthProvider> initialProvider) {
-		providers.add(initialProvider);
+	private List<Class<? extends AuthProvider>> authProviders;
+
+	public AuthProviders(Class<? extends AuthProvider>... authProviders) {
+		this.authProviders = Lists.newArrayList(authProviders);
 	}
 	
 	public List<Class<? extends AuthProvider>> get() {
-		return providers;
+		return authProviders;
+	}
+
+	@Override
+	public Iterator<Class<? extends AuthProvider>> iterator() {
+		return authProviders.iterator();
 	}
 
 }

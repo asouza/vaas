@@ -20,9 +20,8 @@ public class AuthProvidersFactory {
 	@Produces @InstanceProviderList private List<Instance<AuthProvider>> instancesOfProviders = new ArrayList<Instance<AuthProvider>>();
 	
 	@PostConstruct
-	public void configure(){
-		List<Class<? extends AuthProvider>> providersClasses = providerConfiguration.providers().get();
-		for (Class<? extends AuthProvider> providerClass : providersClasses) {
+	public void configure(){		
+		for (Class<? extends AuthProvider> providerClass : providerConfiguration.providers()) {
 			Instance<AuthProvider> provider = configurationFinder.findOne(providerClass);
 			instancesOfProviders .add(provider);
 		}
