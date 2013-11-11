@@ -13,6 +13,82 @@ vaas can be downloaded from maven's repository, or configured in any compatible 
 			<version>1.0.0</version>
 			<scope>compile</scope>
 		</dependency>
+		
+
+#running with JAAS
+VAAS has a fine integration with JAAS, the JavaEE authentication and authorization specification. Let's
+take a look. 
+
+First you have to create a Context.xml file in META-INF folder of your web application. Here we are using
+a MemoryRealm from Tomcat. You can just add your users and roles in tomcat-users.xml file.
+
+	<Context>
+		<Realm className="org.apache.catalina.realm.MemoryRealm" />
+	</Context>
+
+Associate URL's and Rules.
+	@ApplicationScoped
+	public class JAASSecurityRoutes implements RulesConfiguration {
+
+		@Inject
+		private LoggedRule loggedRule;
+		@Inject
+		private HttpServletRequest request;
+	
+		public RulesByURL rulesByURL() {
+			RulesByURL rulesByURL = new RulesByURL();
+			rulesByURL.defaultRule(loggedRule)
+			.add("/main", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
+			.add("/user-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
+			.add("/admin-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"));
+			return rulesByURL;
+		}
+
+	}
+
+Configure the desired for providers, in this case, JAASProvider.
+	public class VaasConfiguration implements ProviderConfiguration{
+
+		@Override
+		public AuthProviders providers() {
+		  // TODO Auto-generated method stub
+		  return new AuthProviders(JAASProvider.class);
+		}
+	}
+
+Configure events to handle login, logout and other cases. Here we have a VRaptor application based
+example.
+
+	public class AuthListener {
+		
+		@Inject
+		private Result result;
+		
+		@Inject
+		private HttpServletRequest request;
+		
+		public void login(@Observes AuthenticatedEvent event){
+			Principal userPrincipal = event.getUserPrincipal();
+			result.redirectTo(AppController.class).main();
+		}
+		
+		public void loginFailed(@Observes AuthenticateFailedEvent event){
+			result.redirectTo(AuthController.class).home();
+		}
+		
+		public void logout(@Observes LogoutEvent event) throws ServletException{
+			request.logout();
+			result.redirectTo(AuthController.class).home();
+		}
+		
+		public void unauthorized(@Observes AuthorizationFailedEvent ev){
+			result.redirectTo(AuthController.class).unauthorized();
+		}
+		
+		
+	
+	}
+	
 
 # configuration
 
