@@ -27,6 +27,7 @@ a MemoryRealm from Tomcat. You can just add your users and roles in tomcat-users
 	</Context>
 
 Associate URL's and Rules.
+
 	@ApplicationScoped
 	public class JAASSecurityRoutes implements RulesConfiguration {
 
@@ -47,6 +48,7 @@ Associate URL's and Rules.
 	}
 
 Configure the desired providers, in this case, JAASProvider.
+
 	public class VaasConfiguration implements ProviderConfiguration{
 
 		@Override
