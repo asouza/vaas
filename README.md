@@ -46,7 +46,7 @@ Associate URL's and Rules.
 
 	}
 
-Configure the desired for providers, in this case, JAASProvider.
+Configure the desired providers, in this case, JAASProvider.
 	public class VaasConfiguration implements ProviderConfiguration{
 
 		@Override
