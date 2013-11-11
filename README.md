@@ -16,7 +16,7 @@ vaas can be downloaded from maven's repository, or configured in any compatible 
 		
 
 #running with JAAS
-VAAS has a fine integration with JAAS, the JavaEE authentication and authorization specification. Let's
+VAAS has a fine integration with JAAS, the JAVAEE authentication and authorization specification. Let's
 take a look. 
 
 First you have to create a Context.xml file in META-INF folder of your web application. Here we are using
