@@ -9,12 +9,18 @@
 
 	<name>vaas</name>
 	<url>http://github.com/caelum/vaas</url>
-	
+
 	<scm>
 		<url>http://github.com/caelum/vaas</url>
 		<connection>scm:git:git://github.com/asouza/vaas</connection>
 		<developerConnection>scm:git:git@github.com:asouza/vaas.git</developerConnection>
 	</scm>
+
+	<parent>
+		<groupId>org.sonatype.oss</groupId>
+		<artifactId>oss-parent</artifactId>
+		<version>7</version>
+	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
