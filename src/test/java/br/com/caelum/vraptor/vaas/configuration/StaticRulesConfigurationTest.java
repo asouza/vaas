@@ -29,9 +29,9 @@ public class StaticRulesConfigurationTest {
 	
 	{
 		final RulesByURL rulesByURL = new RulesByURL();
-		rulesByURL.add("/",new JAASRolesRule(request,"admin")).
-		add("/users/.*",new JAASRolesRule(request,"comercial")).
-		add("/users/.*/task/.*",new JAASRolesRule(request,"employee"));
+		rulesByURL.add("/",new JAASRolesRule("admin")).
+		add("/users/.*",new JAASRolesRule("comercial")).
+		add("/users/.*/task/.*",new JAASRolesRule("employee"));
 		RulesConfiguration rulesConfiguration = new RulesConfiguration() {
 			
 			@Override
@@ -46,20 +46,20 @@ public class StaticRulesConfigurationTest {
 	@Test
 	public void shouldFindRulesForSimpleURL() throws Exception {
 		Set<Rule> rules = urlAccess.getRules("/");
-		assertTrue(rules.contains(new JAASRolesRule(request,"admin")));
+		assertTrue(rules.contains(new JAASRolesRule("admin")));
 	}
 	
 	
 	@Test
 	public void shouldFindRulesForRegexedURL() throws Exception {
 		Set<Rule> rules = urlAccess.getRules("/users/1");
-		assertTrue(rules.contains(new JAASRolesRule(request,"comercial")));
+		assertTrue(rules.contains(new JAASRolesRule("comercial")));
 	}
 	
 	@Test
 	public void shouldFindRulesForRegexedURL2() throws Exception {
 		Set<Rule> rules = urlAccess.getRules("/users/1/task/3");
-		assertTrue(rules.contains(new JAASRolesRule(request,"employee")));
+		assertTrue(rules.contains(new JAASRolesRule("employee")));
 	}
 	
 }

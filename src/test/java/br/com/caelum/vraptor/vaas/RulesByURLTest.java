@@ -1,21 +1,20 @@
 package br.com.caelum.vraptor.vaas;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
 
-import static org.junit.Assert.*;
-
 public class RulesByURLTest {
 	
 	private static class Rule1 implements Rule{
 
 		@Override
-		public boolean isAuthorized() {
-			// TODO Auto-generated method stub
+		public boolean isAuthorized(HttpServletRequest request) {
 			return false;
 		}
 		
@@ -24,8 +23,7 @@ public class RulesByURLTest {
 	private static class Rule2 implements Rule{
 		
 		@Override
-		public boolean isAuthorized() {
-			// TODO Auto-generated method stub
+		public boolean isAuthorized(HttpServletRequest request) {
 			return false;
 		}
 		

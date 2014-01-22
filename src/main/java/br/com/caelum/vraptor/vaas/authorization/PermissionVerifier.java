@@ -7,6 +7,7 @@ import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,9 @@ public class PermissionVerifier {
 
 	@Inject
 	private ConfigurationFinder configurationFinder;
+	
+	@Inject
+	private HttpServletRequest request;
 
 
 	private URLAccess accessConfiguration;
@@ -49,7 +53,7 @@ public class PermissionVerifier {
 		List<Rule> rulesNotAllowed = new ArrayList<Rule>();
 
 		for (Rule rule : rulesForUri) {
-			if(!rule.isAuthorized()){
+			if(!rule.isAuthorized(request)){
 				rulesNotAllowed.add(rule);
 			}
 		}

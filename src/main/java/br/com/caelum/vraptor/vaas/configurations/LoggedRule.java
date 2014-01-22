@@ -2,6 +2,7 @@ package br.com.caelum.vraptor.vaas.configurations;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ public class LoggedRule implements Rule{
 	private VaasSession principalSession;
 
 	@Override
-	public boolean isAuthorized() {
+	public boolean isAuthorized(HttpServletRequest request) {
 		boolean logged = principalSession.isLogged();
 		logger.debug("Is looged: " + logged);
 		return logged;

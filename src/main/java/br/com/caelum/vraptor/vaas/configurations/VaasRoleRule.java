@@ -3,6 +3,7 @@ package br.com.caelum.vraptor.vaas.configurations;
 import java.util.Collection;
 
 import javax.enterprise.context.SessionScoped;
+import javax.servlet.http.HttpServletRequest;
 
 import br.com.caelum.vraptor.vaas.Rule;
 import br.com.caelum.vraptor.vaas.authentication.Authenticable;
@@ -22,7 +23,7 @@ public class VaasRoleRule implements Rule {
 	}
 
 	@Override
-	public boolean isAuthorized() {
+	public boolean isAuthorized(HttpServletRequest request) {
 		
 		if(rolesAllowed.isEmpty()){
 			return true;

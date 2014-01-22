@@ -10,16 +10,14 @@ import br.com.caelum.vraptor.vaas.Rule;
 @Vetoed
 public class JAASRolesRule implements Rule {
 
-	private HttpServletRequest request;
 	private String[] roles;
 
-	public JAASRolesRule(HttpServletRequest request,String... roles) {
-		this.request = request;
+	public JAASRolesRule(String... roles) {
 		this.roles = roles;
 	}
 
 	@Override
-	public boolean isAuthorized() {
+	public boolean isAuthorized(HttpServletRequest request) {
 		boolean valid = false;
 		for (String role : roles) {
 			valid = valid || request.isUserInRole(role);
