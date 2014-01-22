@@ -33,15 +33,13 @@ Associate URL's and Rules.
 
 		@Inject
 		private LoggedRule loggedRule;
-		@Inject
-		private HttpServletRequest request;
 	
 		public RulesByURL rulesByURL() {
 			RulesByURL rulesByURL = new RulesByURL();
 			rulesByURL.defaultRule(loggedRule)
-			.add("/main", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
-			.add("/user-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
-			.add("/admin-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"));
+			.add("/main", JAASRule.withRoles("ROLE_USER","ROLE_ADMIN"))
+			.add("/user-page", JAASRule.withRoles("ROLE_USER","ROLE_ADMIN"))
+			.add("/admin-page", JAASRule.withRoles("ROLE_USER","ROLE_ADMIN"));
 			return rulesByURL;
 		}
 
@@ -199,15 +197,13 @@ Now you have to bind URLs and Rules.
 	
 		@Inject
 		private LoggedRule loggedRule;
-		@Inject
-		private HttpServletRequest request;
 		
 		public RulesByURL rulesByURL() {
             RulesByURL rulesByURL = new RulesByURL();
             rulesByURL.defaultRule(loggedRule)
-                .add("/main", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
-                .add("/user-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"))
-                .add("/admin-page", new JAASRolesRule(request,"ROLE_USER","ROLE_ADMIN"));
+                .add("/main", JAASRule.withRoles("ROLE_USER","ROLE_ADMIN"))
+                .add("/user-page", JAASRule.withRoles("ROLE_USER","ROLE_ADMIN"))
+                .add("/admin-page", JAASRule.withRoles("ROLE_USER","ROLE_ADMIN"));
             return rulesByURL;
 		}
 	
