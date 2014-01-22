@@ -51,7 +51,6 @@ Configure the desired providers, in this case, JAASProvider.
 
 		@Override
 		public AuthProviders providers() {
-		  // TODO Auto-generated method stub
 		  return new AuthProviders(JAASProvider.class);
 		}
 	}
