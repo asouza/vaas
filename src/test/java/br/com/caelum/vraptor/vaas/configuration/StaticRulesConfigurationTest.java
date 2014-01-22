@@ -1,5 +1,8 @@
 package br.com.caelum.vraptor.vaas.configuration;
 
+import static br.com.caelum.vraptor.vaas.configurations.JAASRule.withRoles;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,11 +15,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 import br.com.caelum.vraptor.vaas.Rule;
 import br.com.caelum.vraptor.vaas.RulesByURL;
 import br.com.caelum.vraptor.vaas.configurations.DefaultURLAccess;
-import br.com.caelum.vraptor.vaas.configurations.JAASRolesRule;
 import br.com.caelum.vraptor.vaas.configurations.LoggedRule;
 import br.com.caelum.vraptor.vaas.configurations.RulesConfiguration;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class StaticRulesConfigurationTest {
@@ -29,9 +29,9 @@ public class StaticRulesConfigurationTest {
 	
 	{
 		final RulesByURL rulesByURL = new RulesByURL();
-		rulesByURL.add("/",new JAASRolesRule("admin")).
-		add("/users/.*",new JAASRolesRule("comercial")).
-		add("/users/.*/task/.*",new JAASRolesRule("employee"));
+		rulesByURL.add("/",withRoles("admin")).
+		add("/users/.*",withRoles("comercial")).
+		add("/users/.*/task/.*",withRoles("employee"));
 		RulesConfiguration rulesConfiguration = new RulesConfiguration() {
 			
 			@Override
@@ -46,20 +46,20 @@ public class StaticRulesConfigurationTest {
 	@Test
 	public void shouldFindRulesForSimpleURL() throws Exception {
 		Set<Rule> rules = urlAccess.getRules("/");
-		assertTrue(rules.contains(new JAASRolesRule("admin")));
+		assertTrue(rules.contains(withRoles("admin")));
 	}
 	
 	
 	@Test
 	public void shouldFindRulesForRegexedURL() throws Exception {
 		Set<Rule> rules = urlAccess.getRules("/users/1");
-		assertTrue(rules.contains(new JAASRolesRule("comercial")));
+		assertTrue(rules.contains(withRoles("comercial")));
 	}
 	
 	@Test
 	public void shouldFindRulesForRegexedURL2() throws Exception {
 		Set<Rule> rules = urlAccess.getRules("/users/1/task/3");
-		assertTrue(rules.contains(new JAASRolesRule("employee")));
+		assertTrue(rules.contains(withRoles("employee")));
 	}
 	
 }

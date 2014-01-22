@@ -4,10 +4,6 @@ import java.security.Principal;
 
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-
-import org.jboss.weld.bean.builtin.ee.HttpServletRequestBean;
 
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.controller.AppController;
@@ -21,9 +17,6 @@ public class AuthListener {
 	
 	@Inject
 	private Result result;
-	
-	@Inject
-	private HttpServletRequest request;
 	
 	public void login(@Observes AuthenticatedEvent event){
 		Principal userPrincipal = event.getUserPrincipal();

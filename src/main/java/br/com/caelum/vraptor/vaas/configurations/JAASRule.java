@@ -8,12 +8,15 @@ import javax.servlet.http.HttpServletRequest;
 import br.com.caelum.vraptor.vaas.Rule;
 
 @Vetoed
-public class JAASRolesRule implements Rule {
+public class JAASRule implements Rule {
 
 	private String[] roles;
 
-	public JAASRolesRule(String... roles) {
-		this.roles = roles;
+	private JAASRule(String...roles) {
+	}
+	
+	public static JAASRule withRoles(String...roles) {
+		return new JAASRule(roles);
 	}
 
 	@Override
@@ -42,7 +45,7 @@ public class JAASRolesRule implements Rule {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		JAASRolesRule other = (JAASRolesRule) obj;
+		JAASRule other = (JAASRule) obj;
 		if (!Arrays.equals(roles, other.roles))
 			return false;
 		return true;
