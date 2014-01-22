@@ -71,7 +71,7 @@ example.
 			result.redirectTo(AppController.class).main();
 		}
 		
-		public void loginFailed(@Observes AuthenticateFailedEvent event){
+		public void loginFailed(@Observes AuthenticationFailedEvent event){
 			result.redirectTo(AuthController.class).home();
 		}
 		
@@ -260,7 +260,7 @@ Now we have to handle auth events. Let's see an example.
             result.redirectTo(AppController.class).main();
         }
         
-        public void loginFailed(@Observes AuthenticateFailedEvent event) {
+        public void loginFailed(@Observes AuthenticationFailedEvent event) {
             if (event.hasErrors()) {
                 String message = event.getExceptions().get(0).getMessage(); // just the first message
                 result.include("message",message);

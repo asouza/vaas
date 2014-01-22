@@ -6,11 +6,11 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 
 @RequestScoped
-public class AuthenticateFailedEvent {
+public class AuthenticationFailedEvent {
 
 	private List<Exception> exceptions = new ArrayList<Exception>();
 
-	public AuthenticateFailedEvent() {
+	public AuthenticationFailedEvent() {
 	}
 	
 	public List<Exception> getExceptions() {

@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.caelum.vraptor.vaas.InstanceProviderList;
-import br.com.caelum.vraptor.vaas.event.AuthenticateFailedEvent;
+import br.com.caelum.vraptor.vaas.event.AuthenticationFailedEvent;
 import br.com.caelum.vraptor.vaas.event.AuthenticatedEvent;
 import br.com.caelum.vraptor.vaas.event.LogoutEvent;
 
@@ -25,14 +25,14 @@ public class Authenticator {
 
 	@Inject private HttpServletRequest httpRequest;
 	@Inject private Event<AuthenticatedEvent> authenticatedEvent;
-	@Inject private Event<AuthenticateFailedEvent> authenticationFailedEvent;
+	@Inject private Event<AuthenticationFailedEvent> authenticationFailedEvent;
 	@Inject private Event<LogoutEvent> logoutEvent;
 	@Inject @InstanceProviderList private List<Instance<AuthProvider>> providers;
 
 	public void tryToLogin() {
 		Principal principal = null;
 		Iterator<Instance<AuthProvider>> iterator = providers.iterator();
-		AuthenticateFailedEvent event = new AuthenticateFailedEvent();
+		AuthenticationFailedEvent event = new AuthenticationFailedEvent();
 
 		//for while, if one provider returns Principal, is ok.
 		while(iterator.hasNext() && principal==null){
