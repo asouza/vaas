@@ -18,13 +18,6 @@ public class SecuredUrl {
 		this.url = url;
 	}
 	
-	public boolean accepts(HttpServletRequest request){
-		if(httpMethod==null) {
-			return true;
-		}
-		return HttpMethod.of(request).equals(httpMethod);
-	}
-	
 	public String getUrl() {
 		return url;
 	}
