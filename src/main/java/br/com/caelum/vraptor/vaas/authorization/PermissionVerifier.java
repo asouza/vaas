@@ -13,7 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import br.com.caelum.vraptor.vaas.ConfigurationFinder;
+import br.com.caelum.vraptor.vaas.HttpMethod;
 import br.com.caelum.vraptor.vaas.Rule;
+import br.com.caelum.vraptor.vaas.SecuredUrl;
 import br.com.caelum.vraptor.vaas.configurations.URLAccess;
 
 
@@ -41,7 +43,7 @@ public class PermissionVerifier {
 	public List<Rule> verifyAccessFor(String uri){
 		logger.debug("Verifing access for {}", uri);
 		
-		Set<Rule> rulesForUri = accessConfiguration.getRules(uri);
+		Set<Rule> rulesForUri = accessConfiguration.getRules(new SecuredUrl(uri,HttpMethod.of(request)));
 		logger.debug("Rules found: {}",rulesForUri);
 		
 		List<Rule> rulesNotAllowed = getNotAllowedRules(rulesForUri);

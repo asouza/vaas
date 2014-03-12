@@ -1,6 +1,7 @@
 package br.com.caelum.vraptor.vaas.configuration;
 
 import static br.com.caelum.vraptor.vaas.configurations.JAASRule.withRoles;
+
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
@@ -14,6 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import br.com.caelum.vraptor.vaas.Rule;
 import br.com.caelum.vraptor.vaas.RulesByURL;
+import br.com.caelum.vraptor.vaas.SecuredUrl;
 import br.com.caelum.vraptor.vaas.configurations.DefaultURLAccess;
 import br.com.caelum.vraptor.vaas.configurations.LoggedRule;
 import br.com.caelum.vraptor.vaas.configurations.RulesConfiguration;
@@ -45,20 +47,20 @@ public class StaticRulesConfigurationTest {
 	
 	@Test
 	public void shouldFindRulesForSimpleURL() throws Exception {
-		Set<Rule> rules = urlAccess.getRules("/");
+		Set<Rule> rules = urlAccess.getRules(new SecuredUrl("/"));
 		assertTrue(rules.contains(withRoles("admin")));
 	}
 	
 	
 	@Test
 	public void shouldFindRulesForRegexedURL() throws Exception {
-		Set<Rule> rules = urlAccess.getRules("/users/1");
+		Set<Rule> rules = urlAccess.getRules(new SecuredUrl("/users/1"));
 		assertTrue(rules.contains(withRoles("comercial")));
 	}
 	
 	@Test
 	public void shouldFindRulesForRegexedURL2() throws Exception {
-		Set<Rule> rules = urlAccess.getRules("/users/1/task/3");
+		Set<Rule> rules = urlAccess.getRules(new SecuredUrl("/users/1/task/3"));
 		assertTrue(rules.contains(withRoles("employee")));
 	}
 	

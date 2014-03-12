@@ -7,6 +7,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import br.com.caelum.vraptor.vaas.Rule;
+import br.com.caelum.vraptor.vaas.SecuredUrl;
 
 /**
  * This class provides a easy way for create association between URL and
@@ -29,7 +30,7 @@ public class DefaultURLAccess implements URLAccess{
 	public DefaultURLAccess() {
 	}
 
-	public Set<Rule> getRules(String url) {
+	public Set<Rule> getRules(SecuredUrl url) {
 		Set<Rule> rules = rulesConfiguration.rulesByURL().rulesFor(url);
 		if (rules == null) {
 			String regexKey = tryToFindKeyBasedOnRegex(url);
@@ -42,11 +43,11 @@ public class DefaultURLAccess implements URLAccess{
 		return first != null ? first : other;
 	}
 
-	private String tryToFindKeyBasedOnRegex(String uri) {
-		Set<String> keys = rulesConfiguration.rulesByURL().getURLs();
-		for (String key : keys) {
-			if (uri.matches(key)) {
-				return key;
+	private String tryToFindKeyBasedOnRegex(SecuredUrl url) {
+		Set<SecuredUrl> keys = rulesConfiguration.rulesByURL().getURLs();
+		for (SecuredUrl key : keys) {
+			if (url.getUrl().matches(key.getUrl())) {
+				return key.getUrl();
 			}
 		}
 		return null;

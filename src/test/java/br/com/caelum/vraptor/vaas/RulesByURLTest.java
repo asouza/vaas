@@ -1,13 +1,13 @@
 package br.com.caelum.vraptor.vaas;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
 import org.junit.Test;
 
 import com.google.common.collect.Sets;
+
+import static org.junit.Assert.assertEquals;
 
 public class RulesByURLTest {
 	
@@ -40,10 +40,10 @@ public class RulesByURLTest {
 
 	@Test
 	public void shouldAddARuleForURI() throws Exception {		
-		RulesByURL config = rulesByURL.add("/main",rule1,rule2).add("/bla",rule1);
+		RulesByURL config = rulesByURL.add("/main",HttpMethod.GET,rule1,rule2).add("/bla",rule1);
 		
-		assertEquals(Sets.newHashSet("/main","/bla"), config.getURLs());
-		assertEquals(Sets.newHashSet(rule1,rule2), config.rulesFor("/main"));
+		assertEquals(Sets.newHashSet(new SecuredUrl("/main",HttpMethod.GET),new SecuredUrl("/bla")), config.getURLs());
+		assertEquals(Sets.newHashSet(rule1,rule2), config.rulesFor("/main",HttpMethod.GET));
 		assertEquals(Sets.newHashSet(rule1), config.rulesFor("/bla"));
 	}
 	
@@ -51,9 +51,9 @@ public class RulesByURLTest {
 	public void shouldAddDefaultRuleForAllURLs() throws Exception {		
 		RulesByURL config = rulesByURL.defaultRule(rule1).add("/main",rule2).add("/bla");
 		
-		assertEquals(Sets.newHashSet("/main","/bla"), config.getURLs());
+		assertEquals(Sets.newHashSet(new SecuredUrl("/main"),new SecuredUrl("/bla")), config.getURLs());
 		assertEquals(Sets.newHashSet(rule1,rule2), config.rulesFor("/main"));
-		assertEquals(Sets.newHashSet(rule1), config.rulesFor("/bla"));
+		assertEquals(Sets.newHashSet(rule1), config.rulesFor("/bla"));		
 	}
 		
 }
