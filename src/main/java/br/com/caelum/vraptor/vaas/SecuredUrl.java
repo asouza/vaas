@@ -1,6 +1,5 @@
 package br.com.caelum.vraptor.vaas;
 
-import javax.servlet.http.HttpServletRequest;
 
 public class SecuredUrl {
 
